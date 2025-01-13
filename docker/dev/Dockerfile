@@ -1,0 +1,18 @@
+# syntax=docker/dockerfile:experimental
+FROM python:3.9.19-bullseye
+
+ENV RABBITMQ_HOST=host.docker.internal
+
+RUN apt-get -qy update && \
+    apt-get -qy full-upgrade && \
+    apt-get -qy install pip 
+	
+WORKDIR /app
+COPY setup.py .
+RUN pip install -e .
+RUN python setup.py test
+
+RUN echo "PS1='\[\033[01;32m\]c2_treatment_beneficense_valuator@dev\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$ '" >> /root/.bashrc
+RUN echo "alias run=\"RABBITMQ_HOST=host.docker.internal python C2_treatment_beneficense_valuator\"" >> /root/.bashrc
+RUN echo "alias testAll=\"pushd /app;python setup.py test;popd\"" >> /root/.bashrc
+RUN echo "alias test=\"python -m unittest\"" >> /root/.bashrc
