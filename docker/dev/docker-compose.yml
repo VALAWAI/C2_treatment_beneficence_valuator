@@ -7,7 +7,7 @@ services:
       - ${MQ_PORT:-5672}:5672
       - ${MQ_UI_PORT:-8081}:15672
     networks:
-      - c0_email_actuator_dev
+      - c2_treatment_beneficence_valuator_dev
     environment:
       RABBITMQ_DEFAULT_USER: ${MQ_USER:-mov}
       RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD:-password}
@@ -18,7 +18,7 @@ services:
     ports:
       - ${MONGO_PORT:-27017}:27017
     networks:
-      - c0_email_actuator_dev
+      - c2_treatment_beneficence_valuator_dev
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-root}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password}
@@ -38,7 +38,7 @@ services:
     ports:
       - ${MONGO_ADMIN_PORT:-8082}:8081
     networks:  
-      - c0_email_actuator_dev
+      - c2_treatment_beneficence_valuator_dev
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_ADMIN_USER:-admin}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_ADMIN_PASSWORD:-password}
@@ -56,7 +56,7 @@ services:
     ports:
       - ${MOV_UI_PORT:-8083}:8080
     networks:  
-      - c0_email_actuator_dev
+      - c2_treatment_beneficence_valuator_dev
     environment:
       RABBITMQ_HOST: mq
       RABBITMQ_PORT: ${MQ_PORT:-5672}
@@ -69,4 +69,4 @@ services:
       MOV_URL: http://localhost:${MOV_UI_PORT:-8083}
 
 networks:
-  c0_email_actuator_dev:
+  c2_treatment_beneficence_valuator_dev:

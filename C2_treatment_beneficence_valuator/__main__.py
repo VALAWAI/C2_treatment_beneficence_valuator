@@ -1,5 +1,6 @@
 # 
-# This file is part of the C2_treatment_beneficense_valuator distribution (https://github.com/VALAWAI/c2_treatment_beneficence_valuator).
+# This file is part of the C2_treatment_beneficense_valuator distribution
+# (https://github.com/VALAWAI/c2_treatment_beneficence_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +20,7 @@
 
 from message_service import MessageService
 from mov import MOV
-from received_email_handler import ReceivedEMailHandler
+from received_treatment_handler import ReceivedTreatmentHandler
 from change_parameters_handler import ChangeParametersHandler
 import logging
 import os
@@ -64,7 +65,7 @@ class App:
             self.mov = MOV(self.message_service)
 
             # Create the handlers for the events 
-            ReceivedEMailHandler(self.message_service, self.mov)
+            ReceivedTreatmentHandler(self.message_service, self.mov)
             ChangeParametersHandler(self.message_service, self.mov)
 
             # Register the component

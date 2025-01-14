@@ -16,8 +16,8 @@
 
 from setuptools import setup, find_packages
 setup(
-    name='C2_treatment_beneficence_valuator',
-    version='1.1.0',
+    name='C2_Treatment_beneficence_valuator',
+    version='1.0.0',
     packages=find_packages(include=['C2_treatment_beneficence_valuator', 'C2_treatment_beneficence_valuator.*']),
     install_requires=[
         'torch>=2.4.0',

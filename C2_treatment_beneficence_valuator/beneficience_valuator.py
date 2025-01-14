@@ -1,5 +1,6 @@
 # 
-# This file is part of the C2_treatment_beneficense_valuator distribution (https://github.com/VALAWAI/C2_treatment_beneficense_valuator).
+# This file is part of the C2_treatment_beneficense_valuator distribution
+# (https://github.com/VALAWAI/C2_treatment_beneficense_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -19,6 +20,7 @@
 import torch
 from transformers import pipeline
 import os
+import 
 
 class BeneficienceValuator(object):
     """The component that ovtain the benificence value from a patient treatement.
@@ -26,88 +28,34 @@ class BeneficienceValuator(object):
     
     
     def __init__(self,
-                 model:str="HuggingFaceH4/zephyr-7b-beta",
-                 max_new_tokens:int=int(os.getenv('REPLY_MAX_NEW_TOKENS',"256")),
-                 temperature:float=float(os.getenv('REPLY_TEMPERATURE',"0.7")),
-                 top_k:int=int(os.getenv('REPLY_TOP_K',"50")),
-                 top_p:float=float(os.getenv('REPLY_TOP_P',"0.95")),
-                 system_prompt:str=os.getenv('REPLY_SYSTEM_PROMPT',"You are a polite chatbot who always tries to provide solutions to the customer's problems"),
-                 user_prompt:str="Reply to an e-mail with the subject '{subject}' and the content '{content}'"
+                 age_weigth:float=float(os.getenv('AGE_WEIGHT',"0.040"))
                  ):
-        """Initialize the replier generator
+        """Initialize the beneficience valuator
         
         Parameters
         ----------
-        model : str
-            The LLM model name (https://huggingface.co)
-        max_new_tokens : int
-            The number maximum of tokens to generate. By default get the environment variable
-            REPLY_MAX_NEW_TOKENS and if it not defined use 256.
-        temperature: float
-            The value used to modulate the next token probabilities. By default get the environment variable
-            REPLY_TEMPERATURE and if it not defined use 0.7.
-        top_k: int
-            The number of highest probability tokens to consider for generating the output. By default get the environment variable
-            REPLY_TOP_K and if it not defined use 50.
-        top_p: float
-            A probability threshold for generating the output, using nucleus filtering. By default get the environment variable
-            REPLY_TOP_P and if it not defined use 0.95.
-        system_prompt: str
-            The prompt to use as system. It is used to define how the reply must be done. By default get the environment variable
-            REPLY_SYSTEM_PROMPT and if it not defined use 'You are a polite chatbot who always tries to provide solutions to the customer's problems'.
-        user_prompt: str
-            The prompt used to pass the e-mial information to generate the reply.
+        age_weigth : float
+            The importance of the age when calculate the beneficeince value.
         """
-        self.pipe = pipeline("text-generation", model=model, torch_dtype=torch.bfloat16, device_map="auto")
-        self.max_new_tokens = max_new_tokens
-        self.temperature = temperature
-        self.top_k = top_k
-        self.top_p = top_p
-        self.system_prompt = system_prompt
-        self.user_prompt = user_prompt
+        self.age_weigth = age_weigth
     
-    def generate_reply(self,subject:str,content:str):
-        """Generate the reply for an email.
-        
-        This functions call the LLM  model to obtain a reply for an e-mail.
+    def align_beneficence(self,treatment:Treatment):
+        """Calculate the alignemnt of a treatemnt with the beneficence value.
         
         Parameters
         ----------
-        subject : str
-            The subject of the emial to reply
-        content : str
-            The content of the email to reply
+        treatment : Treatment
+            The treatemnt to apply inot a patient
             
         Returns
         -------
-        str
-            The subject of the reply message
-        str
-            The content of the reply message
+        float
+            The align,ment of the treatment with the beneficence value.
         """
-        messages = [
-            {
-                 "role": "system",
-                 "content": self.system_prompt
-            },
-            {
-                 "role": "user", 
-                 "content": self.user_prompt.format(subject=subject,content=content)
-            }
-        ]
-        prompt = self.pipe.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        outputs = self.pipe(prompt, max_new_tokens=self.max_new_tokens, do_sample=True, temperature=self.temperature, top_k=self.top_k, top_p=self.top_p)
         
-        reply = outputs[0]["generated_text"]
-        reply_subject = f"Re: {subject}"
-        
-        index = reply.index('<|assistant|>')+len('<|assistant|>')
-        reply_content = reply[index:].strip()
-        if reply_content.startswith('Subject:'):
-            index = reply_content.index('\n')
-            reply_subject = reply_content[len('Subject:'):index].strip()
-            reply_content = reply_content[index+1:].strip()
-            
-        return reply_subject, reply_content 
+        alignment = 0.0
 
-        
+	    #for i in range(N_CRITERIA):
+    	#    alignment += weights[i] * (post_criteria[i] - precriteria[i])
+
+    	return alignment

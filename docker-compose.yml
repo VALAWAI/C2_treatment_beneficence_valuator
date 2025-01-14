@@ -67,7 +67,7 @@ services:
       MOV_DB_USER_PASSWORD: ${MOV_DB_USER_PASSWORD:-password}
     volumes:
       - ./docker/deploy/initialize-movDB.js:/docker-entrypoint-initdb.d/init-mongo.js
-      - ${MONGO_LOCAL_DATA:-~/mongo_data/emailActuatorMovDB}:/data/db
+      - ${MONGO_LOCAL_DATA:-~/mongo_data/treatmentBeneficenseValuatorMovDB}:/data/db
     healthcheck:
       test: ["CMD-SHELL", "mongosh --quiet localhost/${DB_NAME:-movDB} --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"]
       interval: 1m
