@@ -1,5 +1,6 @@
 # 
-# This file is part of the C1_llm_emial_replier distribution (https://github.com/VALAWAI/C1_llm_email_replier).
+# This file is part of the C2_treatment_beneficense_valuator distribution
+# (https://github.com/VALAWAI/C2_treatment_beneficense_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 # 
 # This program is free software: you can redistribute it and/or modify

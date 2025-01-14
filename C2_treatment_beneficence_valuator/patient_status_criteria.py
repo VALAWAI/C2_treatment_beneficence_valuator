@@ -10,11 +10,11 @@
 # 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #
 
 from enum import Enum
@@ -129,7 +129,7 @@ class BarthelIndex(Enum):
 	# When the functional independence is unknown.
 	UNKNOWN = 6
 	
-class CognitiveImpairmentLevel(EMNum):
+class CognitiveImpairmentLevel(Enum):
 	""" Define the posible cognitive impairment levels.
 	"""
 	
@@ -191,68 +191,67 @@ class PatientStatusCriteria():
 
 	def __init__(
 		self,
-		age_range: AgeRangeOption,
-		ccd: bool,
-		maca: bool,
-		expected_survival: SurvivalOptions,
-		frail_VIG: SPICT_Scale,
-		clinical_risk_group: ClinicalRiskGroupOption,
-		has_social_support: bool,
-		independence_at_admission: BarthelIndex,
-		independence_instrumental_activities: int,
-		has_advance_directives: bool,
-		is_competent: bool,
-		has_been_informed: bool,
-		is_coerced: bool,
-		has_cognitive_impairment: CognitiveImpairmentLevel,
-		has_emocional_pain: bool,
-		discomfort_degree: DiscomfortDegree,
-		nit_level: NITLevel:
-	):
-	"""Create a patient status.
+		age_range: AgeRangeOption=None,
+		ccd: bool=None,
+		maca: bool=None,
+		expected_survival: SurvivalOptions=None,
+		frail_VIG: SPICT_Scale=None,
+		clinical_risk_group: ClinicalRiskGroupOption=None,
+		has_social_support: bool=None,
+		independence_at_admission: BarthelIndex=None,
+		independence_instrumental_activities: int=None,
+		has_advance_directives: bool=None,
+		is_competent: bool=None,
+		has_been_informed: bool=None,
+		is_coerced: bool=None,
+		has_cognitive_impairment: CognitiveImpairmentLevel=None,
+		has_emocional_pain: bool=None,
+		discomfort_degree: DiscomfortDegree=None,
+		nit_level: NITLevel=None):
+		"""Create a patient status.
 	
-	Parameters
-    ----------
-	age_range: AgeRangeOption
-		The range of age of the patient status.
-	ccd: bool
-		Check if the patient status has a Complex Cronic Disease (CCD).
-	maca: bool
-		A MACA patient status has answered no to the question: Would you be surprised
-		if this patient died in less than 12 months?
-	expected_survival: SurvivalOptions
-		The expected survival time for the patient status.
-	frail_VIG: SPICT_Scale
-		The fragility index of the patient status.
-	clinical_risk_group: ClinicalRiskGroupOption
-		The clinical risk group of the patient status.
-	has_social_support: bool
-		Check if the patient status has social support.
-	independence_at_admission: BarthelIndex
-		The independence for basic activities of daily living at admission.
-	independence_instrumental_activities: int
-		The index that measures the independence for instrumental activities.
-	has_advance_directives: bool
-		The answers to the question: Does the patient status have advance directives?
-	is_competent: bool
-		The answers to the question: Is the patient status competent to understand
-		the instructions of health personnel?
-	has_been_informed: bool
-		The answers to the question: To the patient status or his/her referent
-		authorized has been informed of possible treatments and the consequences of
-		receiving it or No.
-	is_coerced: bool
-		The answers to the question: Is it detected that the patient status has seen
-		coerced/pressured by third parties?
-	has_cognitive_impairment: CognitiveImpairmentLevel
-		Inform if the patient status has cognitive impairment.
-	has_emocional_pain: bool
-		Inform if the patient status has emotional pain.
-	discomfort_degree: DiscomfortDegree
-		Describe the degree of discomfort of the patient status before applying any action.
-	nit_level: NITLevel
-		Describe the level of therapeutic intensity of the patient.
-	"""
+		Parameters
+		----------
+		age_range: AgeRangeOption
+			The range of age of the patient status.
+		ccd: bool
+			Check if the patient status has a Complex Cronic Disease (CCD).
+		maca: bool
+			A MACA patient status has answered no to the question: Would you be surprised
+			if this patient died in less than 12 months?
+		expected_survival: SurvivalOptions
+			The expected survival time for the patient status.
+		frail_VIG: SPICT_Scale
+			The fragility index of the patient status.
+		clinical_risk_group: ClinicalRiskGroupOption
+			The clinical risk group of the patient status.
+		has_social_support: bool
+			Check if the patient status has social support.
+		independence_at_admission: BarthelIndex
+			The independence for basic activities of daily living at admission.
+		independence_instrumental_activities: int
+			The index that measures the independence for instrumental activities.
+		has_advance_directives: bool
+			The answers to the question: Does the patient status have advance directives?
+		is_competent: bool
+			The answers to the question: Is the patient status competent to understand
+			the instructions of health personnel?
+		has_been_informed: bool
+			The answers to the question: To the patient status or his/her referent
+			authorized has been informed of possible treatments and the consequences of
+			receiving it or No.
+		is_coerced: bool
+			The answers to the question: Is it detected that the patient status has seen
+			coerced/pressured by third parties?
+		has_cognitive_impairment: CognitiveImpairmentLevel
+			Inform if the patient status has cognitive impairment.
+		has_emocional_pain: bool
+			Inform if the patient status has emotional pain.
+		discomfort_degree: DiscomfortDegree
+			Describe the degree of discomfort of the patient status before applying any action.
+		nit_level: NITLevel
+			Describe the level of therapeutic intensity of the patient.
+		"""
 	
 		self.age_range = age_range
 		self.ccd = ccd
@@ -271,3 +270,12 @@ class PatientStatusCriteria():
 		self.has_emocional_pain = has_emocional_pain
 		self.discomfort_degree = discomfort_degree
 		self.nit_level = nit_level
+		
+	def normalized_age_range(self):
+		"""Return the normalized vlaue of the age range.
+		"""
+		if self.age_range != None:
+			
+			return 0.1 * self.age_range.value
+
+		return 0.0;
