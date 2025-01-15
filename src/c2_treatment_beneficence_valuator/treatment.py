@@ -64,12 +64,12 @@ class TreatmentAction(str,Enum):
 class Treatment(BaseModel):
 	"""The treatment to apply to a patient.
 	"""
-	id: str = Field(title="The identifier of the treatment.", json_schema_extra={"example":"Treatment_12345"})
-	patient_id: str = Field(title="The identifier of the patient that the treatment is applied.", json_schema_extra={"example":"Patient_12345"})
-	created_time: int = Field(title="The epoch time, in seconds, when the patient treatment is created.", json_schema_extra={"example":1736932587})
+	id: str = Field(min_length=1,title="The identifier of the treatment.", json_schema_extra={"example":"Treatment_12345"})
+	patient_id: str | None = Field(default=None,title="The identifier of the patient that the treatment is applied.", json_schema_extra={"example":"Patient_12345"})
+	created_time: int | None = Field(default=None,title="The epoch time, in seconds, when the patient treatment is created.", json_schema_extra={"example":1736932587})
 	before_status: PatientStatusCriteria = Field(title="The status before to apply the treatment.")
-	actions:  List[TreatmentAction] = Field(title="The treatment actions to apply over the patient.")
-	expected_status: PatientStatusCriteria = Field(title="The expected status of the patient after applying the treatment.")
+	actions:  List[TreatmentAction] = Field(min_length=1,title="The treatment actions to apply over the patient.")
+	expected_status: PatientStatusCriteria | None = Field(default=None,title="The expected status of the patient after applying the treatment.")
 		
 	@classmethod
 	def from_json(cls, json_value:str):

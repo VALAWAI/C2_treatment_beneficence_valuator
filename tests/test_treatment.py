@@ -20,14 +20,23 @@ import unittest
 from c2_treatment_beneficence_valuator.treatment import Treatment, TreatmentAction
 from c2_treatment_beneficence_valuator.patient_status_criteria import AgeRangeOption, SurvivalOptions, SPICT_Scale, ClinicalRiskGroupOption, BarthelIndex, CognitiveImpairmentLevel, DiscomfortDegree, NITLevel
 from pathlib import Path
+import json
 
 class TestTreatment(unittest.TestCase):
 	"""Class to test the treatment
 	"""
+	
+	def __load_treatement_json_as_dict(self):
+		"""Obtain the distionary defined in the treatement.json"""
+
+		value = None
+		with Path(__file__).parent.joinpath('treatment.json').open() as file:
+			value = json.load(file)
+		return value
 		
 		
 	def test_from_json(self):
-		"""Test can obtain from json
+		"""Test can obtain a treatement from a json
 		"""
 				
 		value = ''
@@ -64,6 +73,130 @@ class TestTreatment(unittest.TestCase):
 		
 		self.assertTrue(treatment.expected_status != None)
 
-		
+	def test_not_allow_define_empty_treatment(self):
+		"""Test can create an empty treatment
+		"""
+		error = False
+		try:
+
+			treatment = Treatment()
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can create empty treatment")
+
+	def test_fail_load_empty_json(self):
+		"""Test can not load a treatment form a empty json
+		"""
+		error = False
+		try:
+			
+			treatment = Treatment.from_json("{}")
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can create empty treatment")
+
+	def test_fail_load_treatement_without_id(self):
+		"""Test can not load a treatment without identifier
+		"""
+		error = False
+		try:
+			
+			json_value = self.__load_treatement_json_as_dict();
+			del json_value['id']
+			treatment = Treatment(**json_value)
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can load a treatment without id")
+
+	def test_fail_load_treatement_with_empty_id(self):
+		"""Test can not load a treatment with empty identifier
+		"""
+		error = False
+		try:
+			
+			json_value = self.__load_treatement_json_as_dict();
+			json_value['id']=""
+			treatment = Treatment(**json_value)
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can load a treatment with empty id")
+
+	def test_load_treatement_without_patient_id(self):
+		"""Test can load a treatment without a patient identifier
+		"""
+		json_value = self.__load_treatement_json_as_dict();
+		del json_value['patient_id']
+		treatment = Treatment(**json_value)
+		self.assertIsNone(treatment.patient_id)
+
+	def test_load_treatement_without_created_time(self):
+		"""Test can load a treatment without a created time
+		"""
+		json_value = self.__load_treatement_json_as_dict();
+		del json_value['created_time']
+		treatment = Treatment(**json_value)
+		self.assertIsNone(treatment.created_time)
+
+	def test_fail_load_treatement_without_before_status(self):
+		"""Test can not load a treatment without before status
+		"""
+		error = False
+		try:
+			
+			json_value = self.__load_treatement_json_as_dict();
+			del json_value['before_status']
+			treatment = Treatment(**json_value)
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can load a treatment without before_status")
+
+	def test_fail_load_treatement_without_actions(self):
+		"""Test can not load a treatment without actions
+		"""
+		error = False
+		try:
+			
+			json_value = self.__load_treatement_json_as_dict();
+			del json_value['actions']
+			treatment = Treatment(**json_value)
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can load a treatment without actions")
+
+	def test_fail_load_treatement_with_empty_actions(self):
+		"""Test can not load a treatment with empty actions
+		"""
+		error = False
+		try:
+			
+			json_value = self.__load_treatement_json_as_dict();
+			json_value['actions']=[]
+			treatment = Treatment(**json_value)
+			
+		except: 
+			error = True
+			
+		self.assertTrue(error,"Can load a treatment with empty actions")
+
+	def test_load_treatement_without_expected_status(self):
+		"""Test can load a treatment without a expected status
+		"""
+		json_value = self.__load_treatement_json_as_dict();
+		del json_value['expected_status']
+		treatment = Treatment(**json_value)
+		self.assertIsNone(treatment.expected_status)
+
 if __name__ == '__main__':
     unittest.main()
