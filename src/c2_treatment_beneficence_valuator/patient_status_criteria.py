@@ -209,7 +209,7 @@ class PatientStatusCriteria(BaseModel):
 	nit_level: NITLevel | None = Field(default=None, title="Describe the level of therapeutic intensity of the patient.")
 		
 	def normalized_age_range(self):
-		"""Return the normalized vlaue of the age range.
+		"""Return the normalized value of the age range.
 		"""
 		
 		match self.age_range:
@@ -234,5 +234,196 @@ class PatientStatusCriteria(BaseModel):
 			case AgeRangeOption.AGE_MORE_THAN_99:
 				return 1.0
 			case _:
-				return 0.0;	
+				return 0.0	
 		
+		
+	def normalized_ccd(self):
+		"""Return the normalized value of the CCD.
+		"""
+		if self.ccd == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_maca(self):
+		"""Return the normalized value of the MACA.
+		"""
+		if self.maca == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_expected_survival(self):
+		"""Return the normalized value of the expected survival.
+		"""
+		
+		if self.expected_survival == SurvivalOptions.MORE_THAN_12_MONTHS:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+
+	def normalized_frail_VIG(self):
+		"""Return the normalized value of the frail VIG.
+		"""
+		
+		match self.frail_VIG:
+			case SPICT_Scale.LOW:
+				return 1.0
+			case SPICT_Scale.MODERATE:
+				return 0.5
+			case _:
+				return 0.0	
+
+	def normalized_clinical_risk_group(self):
+		"""Return the normalized value of the clinical risk group.
+		"""
+		
+		match self.clinical_risk_group:
+			case ClinicalRiskGroupOption.PROMOTION_AND_PREVENTION:
+				return 1.0
+			case ClinicalRiskGroupOption.SELF_MANAGEMENT_SUPPORT:
+				return 0.5
+			case _:
+				return 0.0
+	
+	def normalized_has_social_support(self):
+		"""Return the normalized value of the has social support.
+		"""
+		if self.has_social_support == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_independence_at_admission(self):
+		"""Return the normalized value of the age range.
+		"""
+		
+		match self.independence_at_admission:
+			case BarthelIndex.TOTAL:
+				return 0.1
+			case BarthelIndex.SEVERE:
+				return 0.4
+			case BarthelIndex.MODERATE:
+				return 0.75
+			case BarthelIndex.MILD:
+				return 0.95
+			case BarthelIndex.INDEPENDENT:
+				return 1.0
+			case _:
+				return 0.0	
+
+	def normalized_independence_instrumental_activities(self):
+		"""Return the normalized value of the independence instrumental activities.
+		"""
+		
+		match self.independence_instrumental_activities:
+			case 1:
+				return 0.13
+			case 2:
+				return 0.26
+			case 3:
+				return 0.38
+			case 4:
+				return 0.5
+			case 5:
+				return 0.63
+			case 6:
+				return 0.75
+			case 7:
+				return 0.88
+			case 8:
+				return 1.0
+			case _:
+				return 0.0	
+
+	def normalized_has_advance_directives(self):
+		"""Return the normalized value of the has advance directives.
+		"""
+		if self.has_advance_directives == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_is_competent(self):
+		"""Return the normalized value of the is competent.
+		"""
+		if self.is_competent == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_has_been_informed(self):
+		"""Return the normalized value of the has been informed.
+		"""
+		if self.has_been_informed == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_is_coerced(self):
+		"""Return the normalized value of the is coerced.
+		"""
+		if self.is_coerced == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+
+	def normalized_has_cognitive_impairment(self):
+		"""Return the normalized value of the has cognitive impairment.
+		"""
+		
+		match self.has_cognitive_impairment:
+			case CognitiveImpairmentLevel.ABSENT:
+				return 1.0
+			case CognitiveImpairmentLevel.MILD_MODERATE:
+				return 0.5
+			case _:
+				return 0.0	
+
+	def normalized_has_emocional_pain(self):
+		"""Return the normalized value of the has emocional pain.
+		"""
+		if self.has_emocional_pain == False:
+			
+			return 1.0
+			
+		else:
+		
+			return 0.0 
+			
+	def normalized_discomfort_degree(self):
+		"""Return the normalized value of the has discomfort degree.
+		"""
+		
+		match self.discomfort_degree:
+			case DiscomfortDegree.LOW:
+				return 1.0
+			case DiscomfortDegree.MEDIUM:
+				return 0.5
+			case _:
+				return 0.0	
