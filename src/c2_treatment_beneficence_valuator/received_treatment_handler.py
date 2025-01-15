@@ -23,7 +23,6 @@ from treatment import Treatment
 from beneficience_valuator import BeneficienceValuator
 import logging
 import json
-import html2text
 import os
 
 class ReceivedTreatmentHandler(object):

@@ -21,9 +21,9 @@ import os
 import sys
 from _ast import Or
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from C2_treatment_beneficence_valuator.mov import MOV
-from C2_treatment_beneficence_valuator.message_service import MessageService
-from C2_treatment_beneficence_valuator.change_parameters_handler import ChangeParametersHandler
+from c2_treatment_beneficence_valuator.mov import MOV
+from c2_treatment_beneficence_valuator.message_service import MessageService
+from c2_treatment_beneficence_valuator.change_parameters_handler import ChangeParametersHandler
 import re
 import time
 import logging
@@ -171,3 +171,6 @@ class TestChangeParametersHandler(unittest.TestCase):
         }
         self.__assert_process_change_parameters('INFO', parameters)
         self.assertEqual(str(age_weight), os.getenv("AGE_WEIGHT"))
+        
+if __name__ == '__main__':
+    unittest.main()

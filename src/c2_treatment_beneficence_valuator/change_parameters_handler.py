@@ -21,7 +21,6 @@ from message_service import MessageService
 from mov import MOV
 import logging
 import json
-import html2text
 import os
 
 PROPERTY_WEIGHT_NAMES=["age_weight"]

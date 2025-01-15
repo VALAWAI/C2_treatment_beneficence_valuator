@@ -10,34 +10,37 @@
 # 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from C2_treatment_beneficence_valuator.beneficience_valuator import BeneficienceValuator
-from C2_treatment_beneficence_valuator.treatment import Treatment
+from c2_treatment_beneficence_valuator.beneficience_valuator import BeneficienceValuator
+from c2_treatment_beneficence_valuator.treatment import Treatment
 
 class TestBeneficienceValuator(unittest.TestCase):
-    """Class to test the beneficience valuator
-    """
+	"""Class to test the beneficience valuator
+	"""
+  
+	def setUp(self):
+		"""Create the valuator.
+		"""
+		self.valuator = BeneficienceValuator()
+  
+	def test_generate_reply(self):
+		"""Test the reply generation
+		"""
     
-    def setUp(self):
-        """Create the valuator.
-        """
-        self.valuator = BeneficienceValuator()
-    
-    def test_generate_reply(self):
-        """Test the reply generation
-        """
-        
 		value = ''
 		with open('treatement.json', 'r') as file:
 			value = file.read()
 				
 		treatment = Treatment.from_json(value)
-        
-        alignment = self.generator.align_beneficence(treatment)
-        self.assertEquals(alignment,0.39184,"Unexpected treatment beneficience alignment vlaue")
+    
+		alignment = self.generator.align_beneficence(treatment)
+		self.assertEquals(alignment,0.39184,"Unexpected treatment beneficience alignment vlaue")
+
+if __name__ == '__main__':
+    unittest.main()

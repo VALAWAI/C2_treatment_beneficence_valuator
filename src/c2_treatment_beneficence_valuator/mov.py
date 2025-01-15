@@ -55,9 +55,9 @@ class MOV(object):
         """The message to register this component into the MOV (https://valawai.github.io/docs/tutorials/mov#register-a-component)
         """
         
-        setup = self.__read_file('../setup.py')
-        version = re.findall(r"version='(\d+\.\d+\.\d+)'", setup)[0]
-        async_api = self.__read_file('../asyncapi.yaml')
+        setup = self.__read_file('../../pyproject.toml')
+        version = re.findall(r"version\s*=\s*\"(\d+\.\d+\.\d+)\"", setup)[0]
+        async_api = self.__read_file('../../asyncapi.yaml')
              
         msg = {
             "type": "C2",

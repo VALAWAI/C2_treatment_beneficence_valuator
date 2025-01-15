@@ -1,18 +1,20 @@
 # syntax=docker/dockerfile:experimental
-FROM python:3.9.19-bullseye
+FROM python:3.13.1-bullseye
 
 ENV RABBITMQ_HOST=host.docker.internal
-
-RUN apt-get -qy update && \
-    apt-get -qy full-upgrade && \
-    apt-get -qy install pip 
 	
+RUN pip install hatch
+
 WORKDIR /app
-COPY setup.py .
+COPY pyproject.toml .
+COPY LICENSE .
+COPY *.md .
+COPY src/ src/
 RUN pip install -e .
-RUN python setup.py test
+RUN pip install -e .[test]
 
 RUN echo "PS1='\[\033[01;32m\]c2_treatment_beneficense_valuator@dev\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$ '" >> /root/.bashrc
-RUN echo "alias run=\"RABBITMQ_HOST=host.docker.internal python C2_treatment_beneficense_valuator\"" >> /root/.bashrc
-RUN echo "alias testAll=\"pushd /app;python setup.py test;popd\"" >> /root/.bashrc
-RUN echo "alias test=\"python -m unittest\"" >> /root/.bashrc
+RUN echo "alias run=\"RABBITMQ_HOST=host.docker.internal python src/c2_treatment_beneficence_valuator\"" >> /root/.bashrc
+RUN echo "alias testAll=\"hatch test\"" >> /root/.bashrc
+RUN echo "alias coverage=\"hatch test --cover\"" >> /root/.bashrc
+RUN echo "alias test=\"hatch test -vv \"" >> /root/.bashrc

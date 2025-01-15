@@ -21,7 +21,7 @@ import unittest
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from C2_treatment_beneficence_valuator.message_service import MessageService
+from c2_treatment_beneficence_valuator.message_service import MessageService
 import re
 import time
 
@@ -85,3 +85,5 @@ class TestMessageService(unittest.TestCase):
         assert len(msgs) == 1
         assert msg == json.loads(msgs[0])
                 
+if __name__ == '__main__':
+    unittest.main()

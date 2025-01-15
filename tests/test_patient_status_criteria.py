@@ -18,7 +18,7 @@
 
 import unittest
 import math
-from C2_treatment_beneficence_valuator.patient_status_criteria import PatientStatusCriteria, AgeRangeOption
+from c2_treatment_beneficence_valuator.patient_status_criteria import PatientStatusCriteria, AgeRangeOption
 
 class TestPatientStatusCriteria(unittest.TestCase):
 	"""Class to test the patient status criteria.
@@ -45,4 +45,5 @@ class TestPatientStatusCriteria(unittest.TestCase):
 			normalized = self.criteria.normalized_age_range()
 			self.assertTrue(math.isclose(normalized, expected),f"Unexpected normlaized for {value.name}")
 				
-		
+if __name__ == '__main__':
+    unittest.main()
