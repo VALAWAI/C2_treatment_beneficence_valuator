@@ -70,7 +70,7 @@ class _RabbitMQConnection:
                 self.channel = self.connection.channel()
                 return
 
-            except Exception:
+            except (OSError, ValueError):
 
                 logging.exception("Connection was closed, retrying...")
                 time.sleep(retry_sleep_seconds)
@@ -78,7 +78,7 @@ class _RabbitMQConnection:
             tries+=1
 
         msg = "Cannot connect with the RabbitMQ"
-        raise Exception(msg)
+        raise ValueError(msg)
 
     def close(self):
         """Close the connection."""
@@ -89,7 +89,7 @@ class _RabbitMQConnection:
                 self.channel.stop_consuming()
                 self.connection.close()
 
-        except Exception:
+        except (OSError, ValueError):
 
             logging.exception("Cannot close the connection.")
 
@@ -138,11 +138,11 @@ class MessageService:
             self.publish_connection = _RabbitMQConnection(host=host,port=port,username=username,password=password,max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
             logging.debug("Opened publish connection to RabbitMQ")
 
-        except Exception:
+        except (OSError, ValueError) as e:
 
             self.listen_connection.close()
             msg = "Cannot connect with the RabbitMQ"
-            raise RuntimeError(msg)
+            raise ValueError(msg) from e
 
 
     def close(self):

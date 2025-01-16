@@ -27,8 +27,7 @@ from treatment import Treatment
 
 
 class ReceivedTreatmentHandler:
-    """ The component that handle the messages with the treatemnt to valuate.
-    """
+    """ The component that handle the messages with the treatemnt to valuate."""
 
     def __init__(self,message_service:MessageService,mov:MOV):
         """Initialize the handler
@@ -45,9 +44,9 @@ class ReceivedTreatmentHandler:
         self.message_service.listen_for('valawai/c2/treatment_beneficence_valuator/data/treatment',self.handle_message)
 
 
-    def handle_message(self,ch, method, properties, body):
-        """ Manage the received messages on the channel valawai/c2/treatment_beneficence_valuator/data/treatment
-        """
+    def handle_message(self, _ch, _method, _properties, body):
+        """ Manage the received messages on the channel valawai/c2/treatment_beneficence_valuator/data/treatment"""
+
         try:
 
             treatment=Treatment.from_json(body)
@@ -65,6 +64,6 @@ class ReceivedTreatmentHandler:
             self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
             self.mov.info("Sent treatment value feedback",feedback_msg)
 
-        except Exception:
+        except ValueError:
 
-            logging.exception(f"Unexpected message {body}")
+            logging.exception("Unexpected message %s",body)

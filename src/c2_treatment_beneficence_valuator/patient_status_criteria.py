@@ -23,8 +23,7 @@ from pydantic import BaseModel, Field
 
 
 class AgeRangeOption(str,Enum):
-	"""The different ranges of ages for a patient.
-	"""
+	"""The different ranges of ages for a patient."""
 
 	# The age is between 0 and 19 years old.
 	AGE_BETWEEN_0_AND_19 = "AGE_BETWEEN_0_AND_19"
@@ -57,8 +56,7 @@ class AgeRangeOption(str,Enum):
 	AGE_MORE_THAN_99 = "AGE_MORE_THAN_99"
 
 class SurvivalOptions(str,Enum):
-	"""The possible survival options.
-	"""
+	"""The possible survival options."""
 
 	# The survival is less than 12 month
 	LESS_THAN_12_MONTHS = "LESS_THAN_12_MONTHS"
@@ -92,8 +90,7 @@ class SPICT_Scale(str,Enum):
 	UNKNOWN = "UNKNOWN"
 
 class ClinicalRiskGroupOption(str,Enum):
-	""" The possible clinical risk groups.
-	"""
+	""" The possible clinical risk groups."""
 
 	# The clinical risk group is promotion & prevention.
 	PROMOTION_AND_PREVENTION = "PROMOTION_AND_PREVENTION"
@@ -111,8 +108,7 @@ class ClinicalRiskGroupOption(str,Enum):
 	UNKNOWN = "UNKNOWN"
 
 class BarthelIndex(str,Enum):
-	""" This index allow to check the functional independence for basic activities.
-	"""
+	""" This index allow to check the functional independence for basic activities."""
 
 	# When the functional independence is between 0 and 20%.
 	TOTAL = "TOTAL"
@@ -133,8 +129,7 @@ class BarthelIndex(str,Enum):
 	UNKNOWN = "UNKNOWN"
 
 class CognitiveImpairmentLevel(str,Enum):
-	""" Define the posible cognitive impairment levels.
-	"""
+	""" Define the posible cognitive impairment levels."""
 
 	# The cognitive impairment is absent.
 	ABSENT = "ABSENT"
@@ -149,8 +144,7 @@ class CognitiveImpairmentLevel(str,Enum):
 	UNKNOWN = "UNKNOWN"
 
 class DiscomfortDegree(str,Enum):
-	""" The degree of discomfort.
-	"""
+	""" The degree of discomfort."""
 
 	# The discomfort degree is Low or no discomfort.
 	LOW = "LOW"
@@ -165,8 +159,7 @@ class DiscomfortDegree(str,Enum):
 	UNKNOWN = "UNKNOWN"
 
 class NITLevel(str,Enum):
-	""" The level of therapeutic intensity.
-	"""
+	""" The level of therapeutic intensity."""
 
 	# It includes all possible measures to prolong survival
 	ONE = "ONE"
@@ -189,8 +182,7 @@ class NITLevel(str,Enum):
 	FIVE = "FIVE"
 
 class PatientStatusCriteria(BaseModel):
-	"""The status of a patient by some criteria.
-	"""
+	"""The status of a patient by some criteria."""
 
 	age_range: AgeRangeOption | None = Field(default=None, title="The range of age of the patient status.")
 	ccd: bool | None = Field(default=None, title="Check if the patient status has a Complex Cronic Disease (CCD).")
@@ -211,8 +203,7 @@ class PatientStatusCriteria(BaseModel):
 	nit_level: NITLevel | None = Field(default=None, title="Describe the level of therapeutic intensity of the patient.")
 
 	def normalized_age_range(self):
-		"""Return the normalized value of the age range.
-		"""
+		"""Return the normalized value of the age range."""
 
 		match self.age_range:
 			case AgeRangeOption.AGE_BETWEEN_0_AND_19:
@@ -240,43 +231,36 @@ class PatientStatusCriteria(BaseModel):
 
 
 	def normalized_ccd(self):
-		"""Return the normalized value of the CCD.
-		"""
+		"""Return the normalized value of the CCD."""
+
 		if self.ccd is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_maca(self):
-		"""Return the normalized value of the MACA.
-		"""
+		"""Return the normalized value of the MACA."""
+
 		if self.maca is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_expected_survival(self):
-		"""Return the normalized value of the expected survival.
-		"""
+		"""Return the normalized value of the expected survival."""
 
-		if self.expected_survival == SurvivalOptions.MORE_THAN_12_MONTHS:
+		match self.expected_survival:
+			case SurvivalOptions.MORE_THAN_12_MONTHS:
+				return 1.0
+			case _:
+				return 0.0
 
-			return 1.0
-
-		else:
-
-			return 0.0
-
-
-	def normalized_frail_VIG(self):
-		"""Return the normalized value of the frail VIG.
-		"""
+	def normalized_frail_vig(self):
+		"""Return the normalized value of the frail VIG."""
 
 		match self.frail_VIG:
 			case SPICT_Scale.LOW:
@@ -287,8 +271,7 @@ class PatientStatusCriteria(BaseModel):
 				return 0.0
 
 	def normalized_clinical_risk_group(self):
-		"""Return the normalized value of the clinical risk group.
-		"""
+		"""Return the normalized value of the clinical risk group."""
 
 		match self.clinical_risk_group:
 			case ClinicalRiskGroupOption.PROMOTION_AND_PREVENTION:
@@ -299,19 +282,17 @@ class PatientStatusCriteria(BaseModel):
 				return 0.0
 
 	def normalized_has_social_support(self):
-		"""Return the normalized value of the has social support.
-		"""
+		"""Return the normalized value of the has social support."""
+
 		if self.has_social_support is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_independence_at_admission(self):
-		"""Return the normalized value of the age range.
-		"""
+		"""Return the normalized value of the independence at admission."""
 
 		match self.independence_at_admission:
 			case BarthelIndex.TOTAL:
@@ -328,8 +309,7 @@ class PatientStatusCriteria(BaseModel):
 				return 0.0
 
 	def normalized_independence_instrumental_activities(self):
-		"""Return the normalized value of the independence instrumental activities.
-		"""
+		"""Return the normalized value of the independence instrumental activities."""
 
 		match self.independence_instrumental_activities:
 			case 1:
@@ -352,52 +332,46 @@ class PatientStatusCriteria(BaseModel):
 				return 0.0
 
 	def normalized_has_advance_directives(self):
-		"""Return the normalized value of the has advance directives.
-		"""
+		"""Return the normalized value of the has advance directives."""
+
 		if self.has_advance_directives is False:
 
 			return 1.0
 
-		else:
-
-			return 0.0
+		return 0.0
 
 	def normalized_is_competent(self):
-		"""Return the normalized value of the is competent.
-		"""
+		"""Return the normalized value of the is competent."""
+
 		if self.is_competent is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_has_been_informed(self):
-		"""Return the normalized value of the has been informed.
-		"""
+		"""Return the normalized value of the has been informed."""
+
 		if self.has_been_informed is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_is_coerced(self):
-		"""Return the normalized value of the is coerced.
-		"""
+		"""Return the normalized value of the is coerced."""
+
 		if self.is_coerced is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_has_cognitive_impairment(self):
-		"""Return the normalized value of the has cognitive impairment.
-		"""
+		"""Return the normalized value of the has cognitive impairment."""
 
 		match self.has_cognitive_impairment:
 			case CognitiveImpairmentLevel.ABSENT:
@@ -408,19 +382,17 @@ class PatientStatusCriteria(BaseModel):
 				return 0.0
 
 	def normalized_has_emocional_pain(self):
-		"""Return the normalized value of the has emocional pain.
-		"""
+		"""Return the normalized value of the has emocional pain."""
+
 		if self.has_emocional_pain is False:
 
 			return 1.0
 
-		else:
+		return 0.0
 
-			return 0.0
 
 	def normalized_discomfort_degree(self):
-		"""Return the normalized value of the has discomfort degree.
-		"""
+		"""Return the normalized value of the has discomfort degree."""
 
 		match self.discomfort_degree:
 			case DiscomfortDegree.LOW:

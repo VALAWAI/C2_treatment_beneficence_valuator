@@ -30,37 +30,36 @@ from received_treatment_handler import ReceivedTreatmentHandler
 
 
 class App:
-    """The class used as application of the C2 Treatment beneficence valuator
-    """
+    """The class used as application of the C2 Treatment beneficence valuator"""
 
     def __init__(self):
-        """Initilaize the application
-        """
+        """Initilaize the application"""
+
         # Capture when the docker container is stopped
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
-    def exit_gracefully(self, signum, frame):
+    def exit_gracefully(self, _signum, _frame):
         """Called when the docker container is closed
         """
         self.stop()
 
     def stop(self):
-        """Finalize the component.
-        """
+        """Finalize the component."""
 
         try:
+
             self.mov.unregister_component()
             self.message_service.close()
             logging.info("Finished C2 Treatment beneficence valuator")
 
-        except:
+        except (OSError, ValueError):
 
             logging.exception("Could not stop the component")
 
     def start(self):
-        """Initialize the component
-        """
+        """Initialize the component"""
+
         try:
             # Create connection to RabbitMQ
             self.message_service = MessageService()
@@ -77,15 +76,14 @@ class App:
             logging.info("Started C2 Treatment beneficence valuator")
             self.message_service.start_consuming()
 
-        except:
+        except (OSError, ValueError):
 
             logging.exception("Could not start the component")
 
 
 
 def configure_log():
-    """Configure the logging system
-    """
+    """Configure the logging system"""
 
     try:
 
@@ -144,8 +142,8 @@ def configure_log():
 
 
 def main():
-    """The function to launch the C2 Treatment beneficence valuator component
-    """
+    """The function to launch the C2 Treatment beneficence valuator component"""
+
     configure_log()
     app = App()
     app.start()

@@ -121,7 +121,7 @@ class BeneficienceValuator:
 			alignment += self.ccd_weight * (treatment.expected_status.normalized_ccd() - treatment.before_status.normalized_ccd())
 			alignment += self.maca_weight * (treatment.expected_status.normalized_maca() - treatment.before_status.normalized_maca())
 			alignment += self.expected_survival_weight * (treatment.expected_status.normalized_expected_survival() - treatment.before_status.normalized_expected_survival())
-			alignment += self.frail_VIG_weight * (treatment.expected_status.normalized_frail_VIG() - treatment.before_status.normalized_frail_VIG())
+			alignment += self.frail_VIG_weight * (treatment.expected_status.normalized_frail_vig() - treatment.before_status.normalized_frail_vig())
 			alignment += self.clinical_risk_group_weight * (treatment.expected_status.normalized_clinical_risk_group() - treatment.before_status.normalized_clinical_risk_group())
 			alignment += self.has_social_support_weight * (treatment.expected_status.normalized_has_social_support() - treatment.before_status.normalized_has_social_support())
 			alignment += self.independence_at_admission_weight * (treatment.expected_status.normalized_independence_at_admission() - treatment.before_status.normalized_independence_at_admission())

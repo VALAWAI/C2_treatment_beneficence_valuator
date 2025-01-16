@@ -53,10 +53,10 @@ class ChangeParametersHandler:
 			json_dict = json.loads(body)
 			parameters =  ChangeParametersPayload(**json_dict)
 
-			for property in json_dict:
+			for property_name in json_dict:
 
-				weight = json_dict[property]
-				env_property_name = property.upper()
+				weight = json_dict[property_name]
+				env_property_name = property_name.upper()
 				os.environ[env_property_name] = str(weight)
 
 			self.mov.info("Changed the component parameters",parameters)
