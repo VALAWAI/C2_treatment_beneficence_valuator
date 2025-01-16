@@ -51,7 +51,8 @@ class ChangeParametersHandler:
 		try:
 
 			json_dict = json.loads(body)
-			parameters =  ChangeParametersPayload(**json_dict)
+			# Create the model only to check it
+			ChangeParametersPayload(**json_dict)
 
 			for property_name in json_dict:
 
@@ -59,9 +60,8 @@ class ChangeParametersHandler:
 				env_property_name = property_name.upper()
 				os.environ[env_property_name] = str(weight)
 
-			self.mov.info("Changed the component parameters",parameters)
+			self.mov.info("Changed the component parameters",json_dict)
 
-		except Exception:
+		except ValueError:
 
-			msg=f"Unexpected message {body}"
-			logging.exception(msg)
+			logging.exception("Unexpected message %s",body)

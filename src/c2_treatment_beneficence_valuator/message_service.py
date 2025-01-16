@@ -10,11 +10,11 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #
 
 import json
@@ -28,189 +28,228 @@ import pika
 
 class _RabbitMQConnection:
 
-    def __init__(self,
-             host:str=os.getenv('RABBITMQ_HOST','mov-mq'),
-             port:int=int(os.getenv('RABBITMQ_PORT',"5672")),
-             username:str=os.getenv('RABBITMQ_USERNAME','mov'),
-             password:str=os.getenv('RABBITMQ_PASSWORD','password'),
-             max_retries:int=int(os.getenv('RABBITMQ_MAX_RETRIES',"100")),
-             retry_sleep_seconds:int=int(os.getenv('RABBITMQ_RETRY_SLEEP',"3")),
-             ):
-        """Initialize the connection to the RabbitMQ
+	def __init__(self,
+		host:str=os.getenv('RABBITMQ_HOST','mov-mq'),
+		port:int=int(os.getenv('RABBITMQ_PORT',"5672")),
+		username:str=os.getenv('RABBITMQ_USERNAME','mov'),
+		password:str=os.getenv('RABBITMQ_PASSWORD','password'),
+		max_retries:int=int(os.getenv('RABBITMQ_MAX_RETRIES',"100")),
+		retry_sleep_seconds:int=int(os.getenv('RABBITMQ_RETRY_SLEEP',"3")),
+	):
+		"""Initialize the connection to the RabbitMQ
 
-        Parameters
-        ----------
-        host : str
-            The RabbitMQ server host name. By default uses the environment variable RABBITMQ_HOST
-            and if it is not defined uses 'mov-mq'.
-        port : int
-            The RabbitMQ server port. By default uses the environment variable RABBITMQ_PORT
-            and if it is not defined uses '5672'.
-        username : str
-            The user name of the credential to connect to the RabbitMQ serve. By default uses the environment
-            variable RABBITMQ_USERNAME and if it is not defined uses 'mov'.
-        password : str
-            The password of the credential to connect to the RabbitMQ serve. By default uses the environment
-            variable RABBITMQ_PASSWORD and if it is not defined uses 'password'.
-        max_retries : int
-            The number maximum of tries to create a connection with the RabbitMQ server. By default uses
-            the environment variable RABBITMQ_MAX_RETRIES and if it is not defined uses '100'.
-        retry_sleep_seconds : int
-            The seconds to wait between the tries for create a connection with the RabbitMQ server.
-            By default uses the environment variable RABBITMQ_RETRY_SLEEP and if it is not defined uses '3'.
-        """
+		Parameters
+		----------
+		host : str
+			The RabbitMQ server host name. By default uses the environment variable RABBITMQ_HOST
+			and if it is not defined uses 'mov-mq'.
+		port : int
+			The RabbitMQ server port. By default uses the environment variable RABBITMQ_PORT
+			and if it is not defined uses '5672'.
+		username : str
+			The user name of the credential to connect to the RabbitMQ serve. By default uses the environment
+			variable RABBITMQ_USERNAME and if it is not defined uses 'mov'.
+		password : str
+			The password of the credential to connect to the RabbitMQ serve. By default uses the environment
+			variable RABBITMQ_PASSWORD and if it is not defined uses 'password'.
+		max_retries : int
+			The number maximum of tries to create a connection with the RabbitMQ server. By default uses
+			the environment variable RABBITMQ_MAX_RETRIES and if it is not defined uses '100'.
+		retry_sleep_seconds : int
+			The seconds to wait between the tries for create a connection with the RabbitMQ server.
+			By default uses the environment variable RABBITMQ_RETRY_SLEEP and if it is not defined uses '3'.
+		"""
 
-        tries=0
-        while tries < max_retries:
+		tries=0
+		while tries < max_retries:
 
-            try:
+			try:
 
-                credentials = pika.PlainCredentials(username=username,password=password)
-                self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,port=port,credentials=credentials))
-                self.channel = self.connection.channel()
-                return
+				credentials = pika.PlainCredentials(username=username,password=password)
+				self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,port=port,credentials=credentials))
+				self.channel = self.connection.channel()
 
-            except (OSError, ValueError):
+			except (OSError,pika.exceptions.AMQPError):
 
-                logging.exception("Connection was closed, retrying...")
-                time.sleep(retry_sleep_seconds)
+				logging.exception("Connection was closed, retrying...")
+				time.sleep(retry_sleep_seconds)
 
-            tries+=1
+			else:
 
-        msg = "Cannot connect with the RabbitMQ"
-        raise ValueError(msg)
+				return
 
-    def close(self):
-        """Close the connection."""
+			tries+=1
 
-        try:
+		raise pika.exceptions.AMQPError("Cannot connect with the RabbitMQ")
 
-            if self.connection.is_open is True:
-                self.channel.stop_consuming()
-                self.connection.close()
+	def close(self):
+		"""Close the connection."""
 
-        except (OSError, ValueError):
+		try:
 
-            logging.exception("Cannot close the connection.")
+			if self.connection.is_open is True:
 
+				self.channel.stop_consuming()
+				self.connection.close()
+
+		except (OSError,pika.exceptions.AMQPError):
+
+			logging.exception("Cannot close the connection.")
 
 
 class MessageService:
-    """The service to send and receive messages from the RabbitMQ"""
+	"""The service to send and receive messages from the RabbitMQ"""
 
-    def __init__(self,
-                 host:str=os.getenv('RABBITMQ_HOST','mov-mq'),
-                 port:int=int(os.getenv('RABBITMQ_PORT',"5672")),
-                 username:str=os.getenv('RABBITMQ_USERNAME','mov'),
-                 password:str=os.getenv('RABBITMQ_PASSWORD','password'),
-                 max_retries:int=int(os.getenv('RABBITMQ_MAX_RETRIES',"100")),
-                 retry_sleep_seconds:int=int(os.getenv('RABBITMQ_RETRY_SLEEP',"3")),
-                 ):
-        """Initialize the connection to the RabbitMQ
+	def __init__(self,
+			host:str=os.getenv('RABBITMQ_HOST','mov-mq'),
+			port:int=int(os.getenv('RABBITMQ_PORT',"5672")),
+			username:str=os.getenv('RABBITMQ_USERNAME','mov'),
+			password:str=os.getenv('RABBITMQ_PASSWORD','password'),
+			max_retries:int=int(os.getenv('RABBITMQ_MAX_RETRIES',"100")),
+			retry_sleep_seconds:int=int(os.getenv('RABBITMQ_RETRY_SLEEP',"3")),
+		):
+		"""Initialize the connection to the RabbitMQ
 
-        Parameters
-        ----------
-        host : str
-            The RabbitMQ server host name. By default uses the environment variable RABBITMQ_HOST
-            and if it is not defined uses 'mov-mq'.
-        port : int
-            The RabbitMQ server port. By default uses the environment variable RABBITMQ_PORT
-            and if it is not defined uses '5672'.
-        username : str
-            The user name of the credential to connect to the RabbitMQ serve. By default uses the environment
-            variable RABBITMQ_USERNAME and if it is not defined uses 'mov'.
-        password : str
-            The password of the credential to connect to the RabbitMQ serve. By default uses the environment
-            variable RABBITMQ_PASSWORD and if it is not defined uses 'password'.
-        max_retries : int
-            The number maximum of tries to create a connection with the RabbitMQ server. By default uses
-            the environment variable RABBITMQ_MAX_RETRIES and if it is not defined uses '100'.
-        retry_sleep_seconds : int
-            The seconds to wait between the tries for create a connection with the RabbitMQ server.
-            By default uses the environment variable RABBITMQ_RETRY_SLEEP and if it is not defined uses '3'.
-        """
+		Parameters
+		----------
+		host : str
+			The RabbitMQ server host name. By default uses the environment variable RABBITMQ_HOST
+			and if it is not defined uses 'mov-mq'.
+		port : int
+			The RabbitMQ server port. By default uses the environment variable RABBITMQ_PORT
+			and if it is not defined uses '5672'.
+		username : str
+			The user name of the credential to connect to the RabbitMQ serve. By default uses the environment
+			variable RABBITMQ_USERNAME and if it is not defined uses 'mov'.
+		password : str
+			The password of the credential to connect to the RabbitMQ serve. By default uses the environment
+			variable RABBITMQ_PASSWORD and if it is not defined uses 'password'.
+		max_retries : int
+			The number maximum of tries to create a connection with the RabbitMQ server. By default uses
+			the environment variable RABBITMQ_MAX_RETRIES and if it is not defined uses '100'.
+		retry_sleep_seconds : int
+			The seconds to wait between the tries for create a connection with the RabbitMQ server.
+			By default uses the environment variable RABBITMQ_RETRY_SLEEP and if it is not defined uses '3'.
+		"""
 
-        self.listen_connection = _RabbitMQConnection(host=host,port=port,username=username,password=password,max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
-        logging.debug("Opened Listening connection to RabbitMQ")
+		try:
+			
+			self.listen_connection = _RabbitMQConnection(host=host,port=port,username=username,password=password,max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
+			logging.debug("Opened Listening connection to RabbitMQ")
 
-        try:
+		except pika.exceptions.AMQPError as listen_error:
+			
+			raise ValueError("Cannot listen from the RabbitMQ") from listen_error
 
-            self.publish_connection = _RabbitMQConnection(host=host,port=port,username=username,password=password,max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
-            logging.debug("Opened publish connection to RabbitMQ")
-
-        except (OSError, ValueError) as e:
-
-            self.listen_connection.close()
-            msg = "Cannot connect with the RabbitMQ"
-            raise ValueError(msg) from e
+		try:
 
 
-    def close(self):
-        """Close the connections."""
+			self.publish_connection = _RabbitMQConnection(host=host,port=port,username=username,password=password,max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
+			logging.debug("Opened publish connection to RabbitMQ")
 
-        self.listen_connection.close()
-        self.publish_connection.close()
+		except pika.exceptions.AMQPError as publish_error:
 
-    def listen_for(self,queue:str,callback):
-        """Register a input channel
-
-        Parameters
-        ----------
-        queue : str
-            The name of the queue to listen.
-        callback: method
-            The method to call when a message is received.
-        """
-
-        self.listen_connection.channel.queue_declare(queue=queue,
-                                   durable=True,
-                                   exclusive=False,
-                                   auto_delete=False)
-        self.listen_connection.channel.basic_consume(queue=queue,
-                                   auto_ack=True,
-                                   on_message_callback=callback)
-        logging.debug("Listen for the queue %s",queue)
+			try:
+			
+				self.listen_connection.close()
+				
+			except pika.exceptions.AMQPError:
+				
+				logging.error("Cannot close the listening connection to RabbitMQ")
+				
+			raise ValueError("Cannot connect with the RabbitMQ") from publish_error
 
 
-    def publish_to(self,queue:str,msg):
-        """Register a input channel
+	def close(self):
+		"""Close the connections."""
 
-        Parameters
-        ----------
-        queue : str
-            The name of the queue to publish the event.
-        msg: object
-            The message to send.
-        """
+		try:
+			
+			self.listen_connection.close()
 
-        body=json.dumps(msg)
-        properties=pika.BasicProperties(
-            content_type='application/json'
-        )
-        self.publish_connection.channel.basic_publish(exchange='',routing_key=queue,body=body,properties=properties)
-        logging.debug("Publish message to the queue %s",queue)
+		except pika.exceptions.AMQPError:
+				
+			logging.error("Cannot close the listening connection to RabbitMQ")
 
-    def start_consuming(self):
-        """Start to consume the messages."""
+		try:
+			
+			self.publish_connection.close()
 
-        try:
+		except pika.exceptions.AMQPError:
+				
+			logging.error("Cannot close the publish connection to RabbitMQ")
+			
+		
 
-            logging.info("Start listening for events")
-            self.listen_connection.channel.start_consuming()
+	def listen_for(self,queue:str,callback):
+		"""Register a input channel
 
-        except KeyboardInterrupt:
+		Parameters
+		----------
+		queue : str
+			The name of the queue to listen.
+		callback: method
+			The method to call when a message is received.
+		"""
 
-            logging.info("Stop listening for events")
+		self.listen_connection.channel.queue_declare(queue=queue,
+			durable=True,
+			exclusive=False,
+			auto_delete=False)
+		self.listen_connection.channel.basic_consume(queue=queue,
+			auto_ack=True,
+			on_message_callback=callback)
+		logging.debug("Listen for the queue %s",queue)
 
-        except pika.exceptions.ConnectionClosedByBroker:
 
-            logging.info("Closed connection")
+	def publish_to(self,queue:str,msg):
+		"""Register a input channel
 
-        except Exception:
+		Parameters
+		----------
+		queue : str
+			The name of the queue to publish the event.
+		msg: object
+			The message to send.
+		"""
 
-            logging.exception("Consuming messages error.")
+		try:
+			
+			body=json.dumps(msg)
+			properties=pika.BasicProperties(content_type='application/json')
+			self.publish_connection.channel.basic_publish(exchange='',routing_key=queue,body=body,properties=properties)
+			logging.debug("Publish message to the queue %s",queue)
+		
+		except pika.exceptions.AMQPError:
+				
+			logging.error("Cannot publish a msg in the queue %s",queue)
 
-    def start_consuming_and_forget(self):
-        """Start to consume the messages using an independent Thread."""
+		except ValueError:
+				
+			logging.error("Cannot publish a msg because can not encode teh message")
 
-        Thread(target=self.start_consuming).start()
+
+	def start_consuming(self):
+		"""Start to consume the messages."""
+
+		try:
+
+			logging.info("Start listening for events")
+			self.listen_connection.channel.start_consuming()
+
+		except KeyboardInterrupt:
+
+			logging.info("Stop listening for events")
+
+		except pika.exceptions.ConnectionClosedByBroker:
+
+			logging.info("Closed connection")
+
+		except Exception:
+
+			logging.exception("Consuming messages error.")
+
+	def start_consuming_and_forget(self):
+		"""Start to consume the messages using an independent Thread."""
+
+		Thread(target=self.start_consuming).start()

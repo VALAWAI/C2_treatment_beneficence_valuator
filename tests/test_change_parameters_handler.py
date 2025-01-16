@@ -120,7 +120,7 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 		self.fail("Could not get the logs from the MOV")
 		return None
 
-	def __assert_process_change_parameters(self, level:str, parameters):
+	def __assert_process_change_parameters(self, level:str, parameters:dict):
 		"""Check that
 
 		Parameters

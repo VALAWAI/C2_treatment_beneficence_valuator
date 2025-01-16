@@ -52,14 +52,14 @@ class TestMessageService(unittest.TestCase):
 
             MessageService(host='undefined',max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
 
-        except RuntimeError as e:
+        except ValueError as e:
             # Ignored
             error=e
 
         after_test=int(time.time())
         assert error is not None
         expected_test_time=before_test+retry_sleep_seconds*max_retries
-        assert  abs(expected_test_time-after_test) <= retry_sleep_seconds
+        assert abs(expected_test_time-after_test) <= retry_sleep_seconds
 
     def test_publish_and_listen(self):
         """Test that is publish and listen for messages."""

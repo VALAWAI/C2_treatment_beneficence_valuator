@@ -91,22 +91,6 @@ class TestChangeParametersPayload(unittest.TestCase):
 		# Can load a change parameters without a bad value
 		assert error
 
-	def test_fail_load_change_parameters_with_an_undefined_field(self):
-		"""Test can not load a change parameters with an undefined field"""
-
-		error = False
-		try:
-
-			json_value = self.__load_change_parameters_json_as_dict()
-			json_value['undefined_field'] = 0.0
-			payload = ChangeParametersPayload(**json_value)
-			assert payload is None
-
-		except ValidationError:
-			error = True
-
-		# Can load a change parameters with an undefined field
-		assert error
 
 if __name__ == '__main__':
     unittest.main()

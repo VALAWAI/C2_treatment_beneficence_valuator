@@ -109,14 +109,14 @@ class TestPatientStatusCriteria(unittest.TestCase):
 
 		self.criteria.frail_VIG = None
 		expected = 0.0
-		normalized = self.criteria.normalized_frail_VIG()
+		normalized = self.criteria.normalized_frail_vig()
 		assert normalized == expected
 
 		expected = 1.0
 		for value in SPICT_Scale:
 
 			self.criteria.frail_VIG = value
-			normalized = self.criteria.normalized_frail_VIG()
+			normalized = self.criteria.normalized_frail_vig()
 			assert math.isclose(normalized, expected), f"Unexpected normlaized for {value.name}"
 			expected = max(0,expected-0.5)
 

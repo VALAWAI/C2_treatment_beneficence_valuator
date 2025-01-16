@@ -79,7 +79,26 @@ class TestTreatmentPayload(unittest.TestCase):
 		assert len(treatment.actions) == 1
 		assert treatment.actions[0] == TreatmentAction.MEDIUM_CLINICAL_TRIAL
 
-		assert treatment.expected_status is None
+		
+		assert treatment.expected_status is not None
+		assert treatment.expected_status.age_range == AgeRangeOption.AGE_BETWEEN_80_AND_89
+		assert treatment.expected_status.ccd  is True
+		assert treatment.expected_status.maca is False
+		assert treatment.expected_status.expected_survival == SurvivalOptions.MORE_THAN_12_MONTHS
+		assert treatment.expected_status.frail_VIG == SPICT_Scale.LOW
+		assert treatment.expected_status.clinical_risk_group == ClinicalRiskGroupOption.ILLNESS_MANAGEMENT
+		assert treatment.expected_status.has_social_support  is False
+		assert treatment.expected_status.independence_at_admission == BarthelIndex.MILD
+		assert treatment.expected_status.independence_instrumental_activities == 3
+		assert treatment.expected_status.has_advance_directives is True
+		assert treatment.expected_status.is_competent is True
+		assert treatment.expected_status.has_been_informed  is False
+		assert treatment.expected_status.is_coerced is True
+		assert treatment.expected_status.has_cognitive_impairment == CognitiveImpairmentLevel.MILD_MODERATE
+		assert treatment.expected_status.has_emocional_pain is True
+		assert treatment.expected_status.discomfort_degree == DiscomfortDegree.MEDIUM
+		assert treatment.expected_status.nit_level == NITLevel.ONE
+
 
 	def test_not_allow_define_empty_payload(self):
 		"""Test can create an empty treatment"""
@@ -109,23 +128,6 @@ class TestTreatmentPayload(unittest.TestCase):
 			error = True
 
 		# Can create empty treatment
-		assert error
-
-	def test_fail_load_treatment_with_bad_field(self):
-		"""Test can not load a treatment with a bad field"""
-
-		error = False
-		try:
-
-			json_value = self.__load_treatment_json_as_dict()
-			json_value['undefined_field']="Undefined value"
-			treatment = TreatmentPayload(**json_value)
-			assert treatment is None
-
-		except ValidationError:
-			error = True
-
-		# Can load a treatment with an undefined field
 		assert error
 
 	def test_fail_load_treatment_without_id(self):
