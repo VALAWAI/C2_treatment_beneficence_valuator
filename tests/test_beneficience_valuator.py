@@ -33,7 +33,24 @@ class TestBeneficienceValuator(unittest.TestCase):
 	def setUp(self):
 		"""Create the valuator.
 		"""
-		self.valuator = BeneficienceValuator()
+		self.valuator = BeneficienceValuator(
+				age_range_weight=0.04,
+				ccd_weight=0.04,
+				maca_weight=0.04,
+				expected_survival_weight=0.326,
+				frail_VIG_weight=0.065,
+				clinical_risk_group_weight=0.033,
+				has_social_support_weight=0.0,
+				independence_at_admission_weight=0.163,
+				independence_instrumental_activities_weight=0.163,
+				has_advance_directives_weight=0.057,
+				is_competent_weight=0.0,
+				has_been_informed_weight=0.0,
+				is_coerced_weight=0.0,
+				has_cognitive_impairment_weight=0.016,
+				has_emocional_pain_weight=0.0,
+				discomfort_degree_weight=0.057
+			)
 		self.treatment_json_str = ''
 		with Path(__file__).parent.joinpath('treatment.json').open() as file:
 			self.treatment_json_str = file.read()

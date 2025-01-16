@@ -37,11 +37,11 @@ class BeneficienceValuator:
 		independence_at_admission_weight:float = float(os.getenv('INDEPENDENCE_AT_ADMISSION_WEIGHT',"0.163")),
 		independence_instrumental_activities_weight:float = float(os.getenv('INDEPENDENCE_INSTRUMENTAL_ACTIVITIES_WEIGHT',"0.163")),
 		has_advance_directives_weight:float = float(os.getenv('HAS_ADVANCE_DIRECTIVES_WEIGHT',"0.057")),
-		is_competent_weight:float = float(os.getenv('IS_COMPETENT_WEIGHT',"0.000")),
-		has_been_informed_weight:float = float(os.getenv('HAS_BEEN_INFORMED_WEIGHT',"0.000")),
-		is_coerced_weight:float = float(os.getenv('IS_COERCED_WEIGHT',"0.000")),
+		is_competent_weight:float = float(os.getenv('IS_COMPETENT_WEIGHT',"0.0")),
+		has_been_informed_weight:float = float(os.getenv('HAS_BEEN_INFORMED_WEIGHT',"0.0")),
+		is_coerced_weight:float = float(os.getenv('IS_COERCED_WEIGHT',"0.0")),
 		has_cognitive_impairment_weight:float = float(os.getenv('HAS_COGNITIVE_IMPAIRMENT_WEIGHT',"0.016")),
-		has_emocional_pain_weight:float = float(os.getenv('HAS_EMOCIONAL_PAIN_WEIGHT',"0.000")),
+		has_emocional_pain_weight:float = float(os.getenv('HAS_EMOCIONAL_PAIN_WEIGHT',"0.0")),
 		discomfort_degree_weight:float = float(os.getenv('DISCOMFORT_DEGREE_WEIGHT',"0.057"))
 		):
 		"""Initialize the beneficience valuator
