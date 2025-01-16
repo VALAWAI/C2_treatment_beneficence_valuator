@@ -30,7 +30,7 @@ class MOV:
 
     def __init__(self, message_service:MessageService):
         """Initialize the connection to the MOV
-        
+
         Parameters
         ----------
         message_service : MessageService
@@ -47,8 +47,7 @@ class MOV:
         class_file_path = os.path.abspath(os.path.dirname(__file__))
         file_path = os.path.join(class_file_path, path)
         with open(file_path) as file:
-            content = file.read()
-        return content
+            return file.read()
 
     def register_component_msg(self):
         """The message to register this component into the MOV (https://valawai.github.io/docs/tutorials/mov#register-a-component)
@@ -58,13 +57,12 @@ class MOV:
         version = re.findall(r"version\s*=\s*\"(\d+\.\d+\.\d+)\"", setup)[0]
         async_api = self.__read_file('../../asyncapi.yaml')
 
-        msg = {
+        return {
             "type": "C2",
             "name": "c2_treatment_beneficense_valuator",
             "version": version,
             "asyncapi_yaml":async_api
             }
-        return msg
 
     def register_component(self):
         """Register this component into the MOV (https://valawai.github.io/docs/tutorials/mov#register-a-component)
@@ -112,7 +110,7 @@ class MOV:
 
             logging.exception("Could not remove previous component id file")
 
-        if self.component_id != None:
+        if self.component_id is not None:
 
             msg = {"component_id":self.component_id}
             self.message_service.publish_to('valawai/component/unregister', msg)
@@ -121,7 +119,7 @@ class MOV:
 
     def debug(self, msg:str, payload=None):
         """Send a debug log message to the MOV (https://valawai.github.io/docs/tutorials/mov/#add-a-log-message)
-        
+
         Parameters
         ----------
         msg : str
@@ -134,7 +132,7 @@ class MOV:
 
     def info(self, msg:str, payload=None):
         """Send a info log message to the MOV (https://valawai.github.io/docs/tutorials/mov/#add-a-log-message)
-        
+
         Parameters
         ----------
         msg : str
@@ -147,7 +145,7 @@ class MOV:
 
     def warn(self, msg:str, payload=None):
         """Send a warn log message to the MOV (https://valawai.github.io/docs/tutorials/mov/#add-a-log-message)
-        
+
         Parameters
         ----------
         msg : str
@@ -160,7 +158,7 @@ class MOV:
 
     def error(self, msg:str, payload=None):
         """Send a error log message to the MOV (https://valawai.github.io/docs/tutorials/mov/#add-a-log-message)
-        
+
         Parameters
         ----------
         msg : str
@@ -173,7 +171,7 @@ class MOV:
 
     def __log(self, level:str, msg:str, payload=None):
         """Send a log message to the MOV (https://valawai.github.io/docs/tutorials/mov/#add-a-log-message)
-        
+
         Parameters
         ----------
         level : str
@@ -189,11 +187,11 @@ class MOV:
             "message": msg
         }
 
-        if payload != None:
+        if payload is not None:
 
             msg["payload"] = json.dumps(payload)
 
-        if self.component_id != None:
+        if self.component_id is not None:
 
             msg["component_id"] = self.component_id
 

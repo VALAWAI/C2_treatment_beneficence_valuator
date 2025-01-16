@@ -77,15 +77,15 @@ class _RabbitMQConnection:
 
             tries+=1
 
-        raise Exception("Cannot connect with the RabbitMQ")
+        msg = "Cannot connect with the RabbitMQ"
+        raise Exception(msg)
 
     def close(self):
-        """Close the connection.
-        """
+        """Close the connection."""
 
         try:
 
-            if self.connection.is_open == True:
+            if self.connection.is_open is True:
                 self.channel.stop_consuming()
                 self.connection.close()
 
@@ -96,8 +96,7 @@ class _RabbitMQConnection:
 
 
 class MessageService:
-    """The service to send and receive messages from the RabbitMQ
-    """
+    """The service to send and receive messages from the RabbitMQ"""
 
     def __init__(self,
                  host:str=os.getenv('RABBITMQ_HOST','mov-mq'),
@@ -108,7 +107,7 @@ class MessageService:
                  retry_sleep_seconds:int=int(os.getenv('RABBITMQ_RETRY_SLEEP',"3")),
                  ):
         """Initialize the connection to the RabbitMQ
-        
+
         Parameters
         ----------
         host : str
@@ -142,18 +141,19 @@ class MessageService:
         except Exception:
 
             self.listen_connection.close()
-            raise Exception("Cannot connect with the RabbitMQ")
+            msg = "Cannot connect with the RabbitMQ"
+            raise RuntimeError(msg)
 
 
     def close(self):
-        """Close the connections. 
-        """
+        """Close the connections."""
+
         self.listen_connection.close()
         self.publish_connection.close()
 
     def listen_for(self,queue:str,callback):
         """Register a input channel
-         
+
         Parameters
         ----------
         queue : str
@@ -174,7 +174,7 @@ class MessageService:
 
     def publish_to(self,queue:str,msg):
         """Register a input channel
-        
+
         Parameters
         ----------
         queue : str
@@ -191,8 +191,8 @@ class MessageService:
         logging.debug("Publish message to the queue %s",queue)
 
     def start_consuming(self):
-        """Start to consume the messages.
-        """
+        """Start to consume the messages."""
+
         try:
 
             logging.info("Start listening for events")
@@ -211,6 +211,6 @@ class MessageService:
             logging.exception("Consuming messages error.")
 
     def start_consuming_and_forget(self):
-        """Start to consume the messages using an independent Thread.
-        """
+        """Start to consume the messages using an independent Thread."""
+
         Thread(target=self.start_consuming).start()

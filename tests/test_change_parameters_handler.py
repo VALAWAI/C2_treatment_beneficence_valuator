@@ -10,192 +10,206 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 import json
 import logging
 import os
 import random
+import re
 import time
 import unittest
 import urllib.parse
 import uuid
 
 import requests
+from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
 from c2_treatment_beneficence_valuator.change_parameters_handler import ChangeParametersHandler
 from c2_treatment_beneficence_valuator.message_service import MessageService
 from c2_treatment_beneficence_valuator.mov import MOV
 
+PROPERTY_NAME_PARAMETERS = [
+		param("age_range_weight"),
+		param("ccd_weight"),
+		param("maca_weight"),
+		param("expected_survival_weight"),
+		param("frail_VIG_weight"),
+		param("clinical_risk_group_weight"),
+		param("has_social_support_weight"),
+		param("independence_at_admission_weight"),
+		param("independence_instrumental_activities_weight"),
+		param("has_advance_directives_weight"),
+		param("is_competent_weight"),
+		param("has_been_informed_weight"),
+		param("is_coerced_weight"),
+		param("has_cognitive_impairment_weight"),
+		param("has_emocional_pain_weight"),
+		param("discomfort_degree_weight")
+	]
 
-class TestChangeParametersHandler(unittest.TestCase):
-    """Class to test the handler of the receiver e-mails to reply
-    """
 
-    def setUp(self):
-        """Create the handler.
-        """
-        self.message_service = MessageService()
-        self.mov = MOV(self.message_service)
-        self.msgs = []
-        self.handler = ChangeParametersHandler(self.message_service, self.mov)
+class TestChangeParametersHandler(ParametrizedTestCase):
+	"""Class to test the handler of the receiver e-mails to reply"""
 
-    def tearDown(self):
-        """Stops the message service.
-        """
-        self.mov.unregister_component()
-        self.message_service.close()
+	def setUp(self):
+		"""Create the handler."""
 
-    def callback(self, ch, method, properties, body):
-        """Called when a message is received from a listener.
-        """
-        try:
+		self.message_service = MessageService()
+		self.mov = MOV(self.message_service)
+		self.msgs = []
+		self.handler = ChangeParametersHandler(self.message_service, self.mov)
 
-            logging.debug("Received %s", body)
-            msg = json.loads(body)
-            self.msgs.append(msg)
 
-        except Exception as error:
-            print(error)
+	def random_weight(self):
+		"""Generate a random weight value"""
 
-    def test_capture_bad_json_message_body(self):
-        """Check that the handler can manage when the body is not a valid json
-        """
+		return random.randrange(0, 10000)/10000.0
 
-        with self.assertLogs() as cm:
+	def tearDown(self):
+		"""Stops the message service."""
 
-            self.handler.handle_message(None, None, None, "{")
+		self.mov.unregister_component()
+		self.message_service.close()
 
-        self.assertEqual(1, len(cm.output))
-        self.assertRegex(cm.output[0], r'Unexpected message \{')
+	def callback(self, _ch, _method, _properties, body):
+		"""Called when a message is received from a listener."""
 
-    def __capture_last_logs_from_mov(self, min:int=1):
-        """Capture the last logs messages provided in the MOV
-        """
+		try:
 
-        url_params = urllib.parse.urlencode(
-            {
-                'order':'-timestamp',
-                'offset':0,
-                'limit':100
-            }
-        )
-        url = f"http://host.docker.internal:8083/v1/logs?{url_params}"
-        for i in range(10):
+			logging.debug("Received %s", body)
+			msg = json.loads(body)
+			self.msgs.append(msg)
 
-            time.sleep(2)
-            response = requests.get(url)
-            content = response.json()
-            if 'total' in content and content['total'] >= min and 'logs' in content:
-                return content['logs']
+		except ValueError:
+			pass
 
-        self.fail("Could not get the logs from the MOV")
+	def test_capture_bad_json_message_body(self):
+		"""Check that the handler can manage when the body is not a valid json"""
 
-    def __assert_process_change_parameters(self, level:str, parameters):
-        """Check that
-        
-        Parameters
-        ----------
-        level: str
-            The expected level of the message when the parameters are changed
-        parameters: object
-            The parameters that can not be set
-        """
-        self.message_service.start_consuming_and_forget()
-        self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/control/parameters', parameters)
+		with self.assertLogs() as cm:
 
-        expected_payload = json.dumps(parameters)
-        for i in range(11):
+			self.handler.handle_message(None, None, None, "{")
 
-            logs = self.__capture_last_logs_from_mov(2)
-            for log in logs:
+		assert len(cm.output) == 1
+		assert re.search("Unexpected message \\{", cm.output[0])
 
-                if 'payload' in log and log['payload'] == expected_payload and 'level' in log and log['level'] == level:
-                    # Found the expected log
-                    return
+	def __capture_last_logs_from_mov(self, min_value:int=1):
+		"""Capture the last logs messages provided in the MOV"""
 
-        self.fail("Not generated the expected logs to the MOV")
+		url_params = urllib.parse.urlencode(
+				{
+					'order':'-timestamp',
+					'offset':0,
+					'limit':100
+				}
+			)
+		url = f"http://host.docker.internal:8083/v1/logs?{url_params}"
+		for _i in range(10):
 
-    def test_not_change_age_range_weight_with_a_bad_value(self):
-        """Check that the handler not change the 'age_range_weight' when it is not valid
-        """
+			time.sleep(2)
+			response = requests.get(url)
+			content = response.json()
+			if 'total' in content and content['total'] >= min_value and 'logs' in content:
+				return content['logs']
 
-        parameters = {
-            'age_range_weight':str(uuid.uuid4())
-        }
-        self.__assert_process_change_parameters('ERROR', parameters)
+		self.fail("Could not get the logs from the MOV")
+		return None
 
-    def test_not_change_age_range_weight_with_a_value_less_than_0(self):
-        """Check that the handler not change the 'age_range_weight' if the value is less than 100
-        """
+	def __assert_process_change_parameters(self, level:str, parameters):
+		"""Check that
 
-        parameters = {
-            'age_range_weight': -0.00000001-random.random()
-        }
-        self.__assert_process_change_parameters('ERROR', parameters)
+		Parameters
+		----------
+		level: str
+		The expected level of the message when the parameters are changed
+		parameters: object
+		The parameters that can not be set
+		"""
+		self.message_service.start_consuming_and_forget()
+		self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/control/parameters', parameters)
 
-    def test_not_change_age_range_weight_with_a_value_more_than_1(self):
-        """Check that the handler not change the 'age_range_weight' if the value is more than 1000
-        """
+		expected_payload = json.dumps(parameters)
+		for _i in range(11):
 
-        parameters = {
-            'age_range_weight':random.random()+1.00000000001
-        }
-        self.__assert_process_change_parameters('ERROR', parameters)
+			logs = self.__capture_last_logs_from_mov(2)
+			for log in logs:
 
-    def test_change_age_range_weight(self):
-        """Check that the handler change the 'age_range_weight'
-        """
+				if 'payload' in log and log['payload'] == expected_payload and 'level' in log and log['level'] == level:
+					# Found the expected log
+					return
 
-        age_range_weight = random.random()
-        parameters = {
-            'age_range_weight':age_range_weight
-        }
-        self.__assert_process_change_parameters('INFO', parameters)
-        self.assertEqual(str(age_range_weight), os.getenv("AGE_RANGE_WEIGHT"))
+		self.fail("Not generated the expected logs to the MOV")
 
-    def test_not_change_ccd_weight_with_a_bad_value(self):
-        """Check that the handler not change the 'ccd_weight' when it is not valid
-        """
+	def test_change_parameters(self):
+		"""Check that the handler change the parameters"""
 
-        parameters = {
-            'ccd_weight':str(uuid.uuid4())
-        }
-        self.__assert_process_change_parameters('ERROR', parameters)
+		random.random()
+		parameters = {
+				"age_range_weight": self.random_weight(),
+				"ccd_weight": self.random_weight(),
+				"maca_weight": self.random_weight(),
+				"expected_survival_weight": self.random_weight(),
+				"frail_VIG_weight": self.random_weight(),
+				"clinical_risk_group_weight": self.random_weight(),
+				"has_social_support_weight": self.random_weight(),
+				"independence_at_admission_weight": self.random_weight(),
+				"independence_instrumental_activities_weight": self.random_weight(),
+				"has_advance_directives_weight": self.random_weight(),
+				"is_competent_weight": self.random_weight(),
+				"has_been_informed_weight": self.random_weight(),
+				"is_coerced_weight": self.random_weight(),
+				"has_cognitive_impairment_weight": self.random_weight(),
+				"has_emocional_pain_weight": self.random_weight(),
+				"discomfort_degree_weight": self.random_weight()
+			}
+		self.__assert_process_change_parameters('INFO', parameters)
+		for param_name in parameters:
 
-    def test_not_change_ccd_weight_with_a_value_less_than_0(self):
-        """Check that the handler not change the 'ccd_weight' if the value is less than 100
-        """
+			expected = str(parameters[param_name])
+			env_property_name = param_name.upper()
+			env_property = os.getenv(env_property_name)
+			assert expected == env_property
 
-        parameters = {
-            'ccd_weight': -0.00000001-random.random()
-        }
-        self.__assert_process_change_parameters('ERROR', parameters)
+	@parametrize("param_name",PROPERTY_NAME_PARAMETERS)
+	def test_not_change_param_with_a_bad_value(self,param_name:str):
+		"""Check that the handler not change a parameter when it is not valid"""
 
-    def test_not_change_ccd_weight_with_a_value_more_than_1(self):
-        """Check that the handler not change the 'ccd_weight' if the value is more than 1000
-        """
+		bad_value = str(uuid.uuid4())
+		parameters = { param_name: bad_value }
+		self.__assert_process_change_parameters('ERROR', parameters)
 
-        parameters = {
-            'ccd_weight':random.random()+1.00000000001
-        }
-        self.__assert_process_change_parameters('ERROR', parameters)
+	@parametrize("param_name",PROPERTY_NAME_PARAMETERS)
+	def test_not_change_param_with_a_value_less_than_0(self,param_name:str):
+		"""Check that the handler not change a parameter if the value is less than 1"""
 
-    def test_change_ccd_weight(self):
-        """Check that the handler change the 'ccd_weight'
-        """
+		bad_value = -0.000001 - self.random_weight()
+		parameters = { param_name: bad_value }
+		self.__assert_process_change_parameters('ERROR', parameters)
 
-        ccd_weight = random.random()
-        parameters = {
-            'ccd_weight':ccd_weight
-        }
-        self.__assert_process_change_parameters('INFO', parameters)
-        self.assertEqual(str(ccd_weight), os.getenv("CCD_WEIGHT"))
+	@parametrize("param_name",PROPERTY_NAME_PARAMETERS)
+	def test_not_change_param_with_a_value_more_than_1(self,param_name:str):
+		"""Check that the handler not change a parameter if the value is more than 1"""
+
+		bad_value = self.random_weight() + 1.000000001
+		parameters = { param_name: bad_value }
+		self.__assert_process_change_parameters('ERROR', parameters)
+
+	@parametrize("param_name",PROPERTY_NAME_PARAMETERS)
+	def test_change_param(self,param_name:str):
+		"""Check that the handler change  a parameter"""
+
+		value = self.random_weight()
+		parameters = { param_name: value }
+		self.__assert_process_change_parameters('INFO', parameters)
+		expected = str(value)
+		current = os.getenv(param_name.upper())
+		assert expected == current
 
 
 if __name__ == '__main__':
-    unittest.main()
+	unittest.main()

@@ -21,26 +21,10 @@ import json
 import logging
 import os
 
+from change_parameters_payload import ChangeParametersPayload
 from message_service import MessageService
 from mov import MOV
 
-PROPERTY_WEIGHT_NAMES=["age_range_weight",
-	"ccd_weight",
-	"maca_weight",
-	"expected_survival_weight",
-	"frail_VIG_weight",
-	"clinical_risk_group_weight",
-	"has_social_support_weight",
-	"independence_at_admission_weight",
-	"independence_instrumental_activities_weight",
-	"has_advance_directives_weight",
-	"is_competent_weight",
-	"has_been_informed_weight",
-	"is_coerced_weight",
-	"has_cognitive_impairment_weight",
-	"has_emocional_pain_weight",
-	"discomfort_degree_weight"
-	]
 
 class ChangeParametersHandler:
 	"""The component that manage the changes of the component parameters.
@@ -61,40 +45,23 @@ class ChangeParametersHandler:
 		self.message_service.listen_for('valawai/c2/treatment_beneficence_valuator/control/parameters',self.handle_message)
 
 
-	def handle_message(self,ch, method, properties, body):
+	def handle_message(self, _ch, _method, _properties, body):
 		"""Manage the received messages on the channel valawai/c2/treatment_beneficence_valuator/control/parameters
 		"""
 		try:
 
-			parameters=json.loads(body)
-			for property in PROPERTY_WEIGHT_NAMES:
+			json_dict = json.loads(body)
+			parameters =  ChangeParametersPayload(**json_dict)
 
-				if property in parameters:
+			for property in json_dict:
 
-					try:
-
-						weight=float(parameters[property])
-						if weight < 0.0:
-
-							self.mov.error(f"Cannot change the '{property}', because the weight is less than 0.0",parameters)
-							return
-
-						elif weight > 1.0:
-
-							self.mov.error(f"Cannot change the '{property}', because the weight is more than 1.0",parameters)
-							return
-
-						else:
-
-							env_property_name = property.upper()
-							os.environ[env_property_name] = str(weight)
-
-					except Exception as error:
-						self.mov.error(f"Cannot change the '{property}', because {error}",parameters)
-						return
+				weight = json_dict[property]
+				env_property_name = property.upper()
+				os.environ[env_property_name] = str(weight)
 
 			self.mov.info("Changed the component parameters",parameters)
 
 		except Exception:
 
-			logging.exception(f"Unexpected message {body}")
+			msg=f"Unexpected message {body}"
+			logging.exception(msg)

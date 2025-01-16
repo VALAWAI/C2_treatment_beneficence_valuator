@@ -35,44 +35,43 @@ from c2_treatment_beneficence_valuator.mov import MOV
 
 
 class TestMOV(unittest.TestCase):
-    """Class to test the interaction with the Master Of VALAWAI (MOV)
-    """
+    """Class to test the interaction with the Master Of VALAWAI (MOV)"""
 
     def setUp(self):
-        """Create the mov.
-        """
+        """Create the mov."""
+
         self.message_service = MessageService()
         self.mov = MOV(self.message_service)
         self.msgs = []
 
     def tearDown(self):
-        """Stops the message service.
-        """
+        """Stops the message service."""
+
         self.mov.unregister_component()
         self.message_service.close()
 
     def test_register_component_msg(self):
-        """Test the creation of the message to register the component
-        """
+        """Test the creation of the message to register the component"""
+
         msg = self.mov.register_component_msg()
         assert re.match(r'\d+\.\d+\.\d+', msg['version'])
         assert len(msg['asyncapi_yaml']) > 100
 
-    def callback(self, ch, method, properties, body):
-        """Called when a message is received from a listener.
-        """
+    def callback(self, _ch, _method, _properties, body):
+        """Called when a message is received from a listener."""
+
         try:
 
             logging.debug("Received %s", body)
             msg = json.loads(body)
             self.msgs.append(msg)
 
-        except Exception as error:
-            print(error)
+        except ValueError:
+            pass
 
     def __assert_registerd(self, component_id):
-        """Check that a component is registered.
-        """
+        """Check that a component is registered."""
+
         found = False
         for i in range(10):
 
@@ -87,7 +86,7 @@ class TestMOV(unittest.TestCase):
                 'limit':1000
             }
             self.message_service.publish_to('valawai/component/query', query)
-            for j in range(10):
+            for _j in range(10):
 
                 if len(self.msgs) != 0 and self.msgs[0]['query_id'] == query_id:
 
@@ -105,12 +104,15 @@ class TestMOV(unittest.TestCase):
         assert found,f"Component {component_id} is not registered"
         log_dir = os.getenv("LOG_DIR","logs")
         component_id_path = os.path.join(log_dir,os.getenv("COMPONET_ID_FILE_NAME","component_id.json"))
-        assert os.path.isfile(component_id_path) and os.path.getsize(component_id_path) > 0,"No stored component_id into a file"
+
+        # No stored component_id into a file
+        assert os.path.isfile(component_id_path)
+        assert os.path.getsize(component_id_path) > 0
 
 
     def __assert_unregisterd(self, component_id):
-        """Check that a component is unregistered.
-        """
+        """Check that a component is unregistered."""
+
         found = False
         for i in range(10):
 
@@ -125,7 +127,7 @@ class TestMOV(unittest.TestCase):
                 'limit':1000
             }
             self.message_service.publish_to('valawai/component/query', query)
-            for j in range(10):
+            for _j in range(10):
 
                 if len(self.msgs) != 0 and self.msgs[0]['query_id'] == query_id:
 
@@ -150,23 +152,22 @@ class TestMOV(unittest.TestCase):
 
 
     def __assert_register(self):
-        """Assert the component is registered
-        """
+        """Assert the component is registered"""
+
         self.message_service.start_consuming_and_forget()
         self.mov.register_component()
 
-        for i in range(10):
+        for _i in range(10):
 
-            if self.mov.component_id != None:
+            if self.mov.component_id is not None:
                 break
 
             time.sleep(1)
 
-        assert self.mov.component_id != None
+        assert self.mov.component_id is not None
 
     def test_register_and_unregister_component(self):
-        """Test the register and unregister the component
-        """
+        """Test the register and unregister the component"""
 
         self.message_service.listen_for('valawai/component/page', self.callback)
         self.__assert_register()
@@ -178,8 +179,7 @@ class TestMOV(unittest.TestCase):
         self.__assert_unregisterd(component_id)
 
     def test_debug(self):
-        """Check that the component send log messages to the MOV
-        """
+        """Check that the component send log messages to the MOV"""
 
         test_id = "test_debug_" + str(uuid.uuid4())
         self.mov.debug(f"{test_id} empty")
@@ -202,7 +202,7 @@ class TestMOV(unittest.TestCase):
         )
         url = f"http://host.docker.internal:8083/v1/logs?{url_params}"
         logs = []
-        for i in range(10):
+        for _i in range(10):
 
             time.sleep(2)
             response = requests.get(url)
@@ -215,29 +215,29 @@ class TestMOV(unittest.TestCase):
         for log in logs:
 
             assert log['level'] == 'DEBUG'
-            type = re.findall(f"{test_id} (.+)", log['message'])[0]
-            if type == "empty":
+            type_name = re.findall(f"{test_id} (.+)", log['message'])[0]
+            if type_name == "empty":
 
                 if "payload" in log:
-                    assert log['payload'] == None
+                    assert log['payload'] is None
                 if "component" in log:
-                    assert log['component'] == None
+                    assert log['component'] is None
 
-            elif type == "with payload":
+            elif type_name == "with payload":
 
                 assert log['level'] == 'DEBUG'
                 assert json.loads(log['payload']) == payload
                 if "component" in log:
-                    assert log['component'] == None
+                    assert log['component'] is None
 
-            elif type == "empty2":
+            elif type_name == "empty2":
 
                 assert log['level'] == 'DEBUG'
                 if "payload" in log:
-                    assert log['payload'] == None
+                    assert log['payload'] is None
                 assert log['component']['id'] == self.mov.component_id
 
-            elif type == "with payload2":
+            elif type_name == "with payload2":
 
                 assert log['level'] == 'DEBUG'
                 assert json.loads(log['payload']) == payload

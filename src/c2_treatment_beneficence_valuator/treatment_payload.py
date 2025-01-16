@@ -61,9 +61,8 @@ class TreatmentAction(str,Enum):
 	# The patient can have surgery with the intention of curing.
 	CURE_SURGERY = "CURE_SURGERY"
 
-class Treatment(BaseModel):
-	"""The treatment to apply to a patient.
-	"""
+class TreatmentPayload(BaseModel):
+	"""The treatment to apply to a patient."""
 	id: str = Field(min_length=1,title="The identifier of the treatment.", json_schema_extra={"example":"Treatment_12345"})
 	patient_id: str | None = Field(default=None,title="The identifier of the patient that the treatment is applied.", json_schema_extra={"example":"Patient_12345"})
 	created_time: int | None = Field(default=None,title="The epoch time, in seconds, when the patient treatment is created.", json_schema_extra={"example":1736932587})
@@ -74,16 +73,16 @@ class Treatment(BaseModel):
 	@classmethod
 	def from_json(cls, json_value:str):
 		"""Loads a treatment from a JSON inside a string.
-		
+
 		Parameters
 		----------
 		json_value: str
 			The encoded treatment in JSON.
-			
+
 		Returns
 		----------
-		Template
+		TreatmentPayload
 			The model encoded in the JSON.
 		"""
 		json_dict = json.loads(json_value)
-		return Treatment(**json_dict)
+		return TreatmentPayload(**json_dict)

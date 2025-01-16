@@ -49,7 +49,8 @@ dependencies = [
 	
 [tool.hatch.envs.hatch-test]
 extra-dependencies = [
-	"requests>=2.32.3"
+	"requests>=2.32.3",
+	"unittest-parametrize>=1.6.0"
 	]
 [tool.coverage.run]
 omit = [

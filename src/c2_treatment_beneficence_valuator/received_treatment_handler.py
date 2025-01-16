@@ -32,7 +32,7 @@ class ReceivedTreatmentHandler:
 
     def __init__(self,message_service:MessageService,mov:MOV):
         """Initialize the handler
-        
+
         Parameters
         ----------
         message_service : MessageService
@@ -58,12 +58,12 @@ class ReceivedTreatmentHandler:
 
             value_name = os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience")
             feedback_msg={
-               "treatment_id": treatement.id,
+               "treatment_id": treatment.id,
                "value_name": value_name,
                "alignment": alignment
                }
-            self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatement_value_feedback',feedback_msg)
-            self.mov.info("Sent treatement value feedback",feedback_msg)
+            self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
+            self.mov.info("Sent treatment value feedback",feedback_msg)
 
         except Exception:
 

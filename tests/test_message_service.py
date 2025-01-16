@@ -29,22 +29,20 @@ from c2_treatment_beneficence_valuator.message_service import MessageService
 
 
 class TestMessageService(unittest.TestCase):
-    """Class to test the service to interact with the rabbitMQ
-    """
+    """Class to test the service to interact with the rabbitMQ"""
 
     def setUp(self):
-        """Create the message service.
-        """
+        """Create the message service."""
+
         self.message_service=MessageService()
 
     def tearDown(self):
-        """Stops the message service.
-        """
+        """Stops the message service."""
+
         self.message_service.close()
 
     def test_should_not_initilize_to_an_undefined_server(self):
-        """Test that can not register to an undefined server
-        """
+        """Test that can not register to an undefined server"""
 
         error=None
         before_test=int(time.time())
@@ -54,21 +52,22 @@ class TestMessageService(unittest.TestCase):
 
             MessageService(host='undefined',max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
 
-        except Exception as e:
+        except RuntimeError as e:
             # Ignored
             error=e
 
         after_test=int(time.time())
-        assert error != None
+        assert error is not None
         expected_test_time=before_test+retry_sleep_seconds*max_retries
         assert  abs(expected_test_time-after_test) <= retry_sleep_seconds
 
     def test_publish_and_listen(self):
-        """Test that is publish and listen for messages.
-        """
+        """Test that is publish and listen for messages."""
+
         queue="Queue_to_test_message_service"
         msgs=[]
-        callback = lambda ch, method, properties, body: msgs.append(body)
+        def callback(_ch, _method, _properties, body):
+            return msgs.append(body)
         self.message_service.listen_for(queue,callback)
         self.message_service.start_consuming_and_forget()
         msg={
@@ -76,7 +75,7 @@ class TestMessageService(unittest.TestCase):
             "name": "name"
         }
         self.message_service.publish_to(queue,msg)
-        for i in range(10):
+        for _i in range(10):
 
             if len(msgs) != 0:
                 break

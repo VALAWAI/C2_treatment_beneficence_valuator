@@ -19,11 +19,11 @@
 
 import os
 
-from treatment import Treatment
+from treatment_payload import TreatmentPayload
 
 
 class BeneficienceValuator:
-	"""The component that ovtain the benificence value from a patient treatement.
+	"""The component that ovtain the benificence value from a patient treatment.
 	"""
 
 	def __init__(self,
@@ -99,7 +99,7 @@ class BeneficienceValuator:
 		self.discomfort_degree_weight = discomfort_degree_weight
 
 
-	def align_beneficence(self,treatment:Treatment):
+	def align_beneficence(self,treatment:TreatmentPayload):
 		"""Calculate the alignemnt of a treatemnt with the beneficence value.
 
 		Parameters

@@ -23,7 +23,7 @@ from pathlib import Path
 
 from c2_treatment_beneficence_valuator.beneficience_valuator import BeneficienceValuator
 from c2_treatment_beneficence_valuator.patient_status_criteria import PatientStatusCriteria
-from c2_treatment_beneficence_valuator.treatment import Treatment
+from c2_treatment_beneficence_valuator.treatment_payload import TreatmentPayload
 
 
 class TestBeneficienceValuator(unittest.TestCase):
@@ -59,10 +59,10 @@ class TestBeneficienceValuator(unittest.TestCase):
 		"""Test calculate alignment for a treatment
 		"""
 
-		treatment = Treatment.from_json(self.treatment_json_str)
+		treatment = TreatmentPayload.from_json(self.treatment_json_str)
 
 		alignment = self.valuator.align_beneficence(treatment)
-		self.assertTrue(math.isclose(alignment, 0.39184),"Unexpected treatment beneficience alignment value")
+		assert math.isclose(alignment, 0.39184), 'Unexpected treatment beneficience alignment value'
 
 	def test_align_beneficence_for_treatment_without_expected_status(self):
 		"""Test calculate alignment with an empty treatment
@@ -70,18 +70,18 @@ class TestBeneficienceValuator(unittest.TestCase):
 
 		treatment_dict = json.loads(self.treatment_json_str)
 		del treatment_dict['expected_status']
-		treatment = Treatment(**treatment_dict)
+		treatment = TreatmentPayload(**treatment_dict)
 		alignment = self.valuator.align_beneficence(treatment)
-		self.assertTrue(math.isclose(alignment, 0.0),"Unexpected treatment beneficience alignment value")
+		assert math.isclose(alignment, 0.0), 'Unexpected treatment beneficience alignment value'
 
 	def test_align_beneficence_for_treatment_with_empty_expected_status(self):
 		"""Test calculate alignment with an empty treatment
 		"""
 
-		treatment = Treatment.from_json(self.treatment_json_str)
+		treatment = TreatmentPayload.from_json(self.treatment_json_str)
 		treatment.expected_status = PatientStatusCriteria()
 		alignment = self.valuator.align_beneficence(treatment)
-		self.assertTrue(math.isclose(alignment, -0.32445),"Unexpected treatment beneficience alignment value")
+		assert math.isclose(alignment, -0.32445), 'Unexpected treatment beneficience alignment value'
 
 if __name__ == '__main__':
     unittest.main()

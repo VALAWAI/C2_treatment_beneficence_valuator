@@ -242,7 +242,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_ccd(self):
 		"""Return the normalized value of the CCD.
 		"""
-		if self.ccd == False:
+		if self.ccd is False:
 
 			return 1.0
 
@@ -253,7 +253,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_maca(self):
 		"""Return the normalized value of the MACA.
 		"""
-		if self.maca == False:
+		if self.maca is False:
 
 			return 1.0
 
@@ -301,7 +301,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_has_social_support(self):
 		"""Return the normalized value of the has social support.
 		"""
-		if self.has_social_support == False:
+		if self.has_social_support is False:
 
 			return 1.0
 
@@ -354,7 +354,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_has_advance_directives(self):
 		"""Return the normalized value of the has advance directives.
 		"""
-		if self.has_advance_directives == False:
+		if self.has_advance_directives is False:
 
 			return 1.0
 
@@ -365,7 +365,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_is_competent(self):
 		"""Return the normalized value of the is competent.
 		"""
-		if self.is_competent == False:
+		if self.is_competent is False:
 
 			return 1.0
 
@@ -376,7 +376,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_has_been_informed(self):
 		"""Return the normalized value of the has been informed.
 		"""
-		if self.has_been_informed == False:
+		if self.has_been_informed is False:
 
 			return 1.0
 
@@ -387,7 +387,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_is_coerced(self):
 		"""Return the normalized value of the is coerced.
 		"""
-		if self.is_coerced == False:
+		if self.is_coerced is False:
 
 			return 1.0
 
@@ -410,7 +410,7 @@ class PatientStatusCriteria(BaseModel):
 	def normalized_has_emocional_pain(self):
 		"""Return the normalized value of the has emocional pain.
 		"""
-		if self.has_emocional_pain == False:
+		if self.has_emocional_pain is False:
 
 			return 1.0
 
