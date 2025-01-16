@@ -51,3 +51,7 @@ dependencies = [
 extra-dependencies = [
 	"requests>=2.32.3"
 	]
+[tool.coverage.run]
+omit = [
+    "tests/*"
+	]

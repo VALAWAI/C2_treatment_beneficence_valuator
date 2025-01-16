@@ -1,34 +1,33 @@
-# 
+#
 # This file is part of the C2_treatment_beneficense_valuator distribution
 # (https://github.com/VALAWAI/C2_treatment_beneficense_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import sys
-import os.path
-import re
-from message_service import MessageService
 import json
 import logging
-from _ast import Try
+import os.path
+import re
+
+from message_service import MessageService
 
 
-class MOV(object):
+class MOV:
     """The component used to interatc with the Master Of VALAWAI (MOV)
     """
-    
+
     def __init__(self, message_service:MessageService):
         """Initialize the connection to the MOV
         
@@ -41,24 +40,24 @@ class MOV(object):
         self.message_service = message_service
         self.component_id = None
         self.message_service.listen_for('valawai/c2/treatment_beneficence_valuator/control/registered', self.registered_component)
-    
+
     def __read_file(self, path:str):
         """Read a file and return its content.
         """
         class_file_path = os.path.abspath(os.path.dirname(__file__))
         file_path = os.path.join(class_file_path, path)
-        with open(file_path, 'r') as file:
+        with open(file_path) as file:
             content = file.read()
         return content
-        
+
     def register_component_msg(self):
         """The message to register this component into the MOV (https://valawai.github.io/docs/tutorials/mov#register-a-component)
         """
-        
+
         setup = self.__read_file('../../pyproject.toml')
         version = re.findall(r"version\s*=\s*\"(\d+\.\d+\.\d+)\"", setup)[0]
         async_api = self.__read_file('../../asyncapi.yaml')
-             
+
         msg = {
             "type": "C2",
             "name": "c2_treatment_beneficense_valuator",
@@ -70,10 +69,10 @@ class MOV(object):
     def register_component(self):
         """Register this component into the MOV (https://valawai.github.io/docs/tutorials/mov#register-a-component)
         """
-        
+
         msg = self.register_component_msg()
         self.message_service.publish_to('valawai/component/register', msg)
-        
+
     def registered_component(self, ch, method, properties, body):
         """Called when the component has been registered.
         """
@@ -81,40 +80,40 @@ class MOV(object):
         msg = json.loads(body)
         self.component_id = msg['id']
         logging.info(f"Register C2 Treatment beneficence valuator with the identifier '{self.component_id}'")
-        
+
         try:
-            
+
             log_dir = os.getenv("LOG_DIR", "logs")
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
-              
+
             component_id_path = os.path.join(log_dir, os.getenv("COMPONET_ID_FILE_NAME", "component_id.json"))
             with open(component_id_path, "w") as component_id_file:
                 content = json.dumps(msg, sort_keys=True, indent=2)
                 component_id_file.write(content)
-            
+
         except:
-    
+
             logging.exception("Could not store the component id into a file")
-    
+
     def unregister_component(self):
         """Unregister this component from the MOV (https://valawai.github.io/docs/tutorials/mov/#unregister-a-component)
         """
         try:
-            
+
             log_dir = os.getenv("LOG_DIR", "logs")
             if os.path.exists(log_dir):
 
                 component_id_path = os.path.join(log_dir, os.getenv("COMPONET_ID_FILE_NAME", "component_id.json"))
                 if os.path.isfile(component_id_path):
                     os.remove(component_id_path)
-            
+
         except:
-    
+
             logging.exception("Could not remove previous component id file")
-        
+
         if self.component_id != None:
-            
+
             msg = {"component_id":self.component_id}
             self.message_service.publish_to('valawai/component/unregister', msg)
             logging.info(f"Unregisterd C2 Treatment beneficence valuator with the identifier '{self.component_id}'")
@@ -157,7 +156,7 @@ class MOV(object):
             The payload associated to the log message.
         """
         self.__log('WARN', msg, payload)
-        logging.warn(msg)
+        logging.warning(msg)
 
     def error(self, msg:str, payload=None):
         """Send a error log message to the MOV (https://valawai.github.io/docs/tutorials/mov/#add-a-log-message)
@@ -189,14 +188,14 @@ class MOV(object):
             "level":level,
             "message": msg
         }
-        
+
         if payload != None:
-            
+
             msg["payload"] = json.dumps(payload)
-            
+
         if self.component_id != None:
-            
+
             msg["component_id"] = self.component_id
-        
+
         self.message_service.publish_to('valawai/log/add', msg)
-        
+
