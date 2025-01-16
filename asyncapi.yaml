@@ -544,7 +544,7 @@ components:
       description: The parameters that cna be changed on this component.
       type: object
       properties:
-        age_weigth:
+        age_weight:
           description: the weith oof the patient age in the alignemnt of the treatment.
           type: number
           example:

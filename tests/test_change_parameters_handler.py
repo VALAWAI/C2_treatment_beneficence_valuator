@@ -120,55 +120,82 @@ class TestChangeParametersHandler(unittest.TestCase):
 
         self.fail("Not generated the expected logs to the MOV")
 
-    def test_not_change_age_weight_with_a_bad_value(self):
-        """Check that the handler not change the 'age_weight' when it is not valid
+    def test_not_change_age_range_weight_with_a_bad_value(self):
+        """Check that the handler not change the 'age_range_weight' when it is not valid
         """
 
         parameters = {
-            'age_weight':str(uuid.uuid4())
+            'age_range_weight':str(uuid.uuid4())
         }
         self.__assert_process_change_parameters('ERROR', parameters)
 
-    def test_not_change_age_weight_with_a_value_less_than_100(self):
-        """Check that the handler not change the 'age_weight' if the value is less than 100
+    def test_not_change_age_range_weight_with_a_value_less_than_0(self):
+        """Check that the handler not change the 'age_range_weight' if the value is less than 100
         """
 
         parameters = {
-            'age_weight': -0.00000001-random.random()
+            'age_range_weight': -0.00000001-random.random()
         }
         self.__assert_process_change_parameters('ERROR', parameters)
 
-    def test_not_change_age_weight_with_a_value_more_than_1000(self):
-        """Check that the handler not change the 'age_weight' if the value is more than 1000
+    def test_not_change_age_range_weight_with_a_value_more_than_1(self):
+        """Check that the handler not change the 'age_range_weight' if the value is more than 1000
         """
 
         parameters = {
-            'age_weight':random.random()+1.00000000001
+            'age_range_weight':random.random()+1.00000000001
         }
         self.__assert_process_change_parameters('ERROR', parameters)
 
-    def test_change_age_weight(self):
-        """Check that the handler change the 'age_weight'
+    def test_change_age_range_weight(self):
+        """Check that the handler change the 'age_range_weight'
         """
 
-        age_weight = random.random()
+        age_range_weight = random.random()
         parameters = {
-            'age_weight':age_weight
+            'age_range_weight':age_range_weight
         }
         self.__assert_process_change_parameters('INFO', parameters)
-        self.assertEqual(str(age_weight), os.getenv("AGE_WEIGHT"))
+        self.assertEqual(str(age_range_weight), os.getenv("AGE_RANGE_WEIGHT"))
 
-
-    def test_change_parameters(self):
-        """Check that the handler change the parameters
+    def test_not_change_ccd_weight_with_a_bad_value(self):
+        """Check that the handler not change the 'ccd_weight' when it is not valid
         """
 
-        age_weight = random.random()
         parameters = {
-            'age_weight':age_weight
+            'ccd_weight':str(uuid.uuid4())
+        }
+        self.__assert_process_change_parameters('ERROR', parameters)
+
+    def test_not_change_ccd_weight_with_a_value_less_than_0(self):
+        """Check that the handler not change the 'ccd_weight' if the value is less than 100
+        """
+
+        parameters = {
+            'ccd_weight': -0.00000001-random.random()
+        }
+        self.__assert_process_change_parameters('ERROR', parameters)
+
+    def test_not_change_ccd_weight_with_a_value_more_than_1(self):
+        """Check that the handler not change the 'ccd_weight' if the value is more than 1000
+        """
+
+        parameters = {
+            'ccd_weight':random.random()+1.00000000001
+        }
+        self.__assert_process_change_parameters('ERROR', parameters)
+
+    def test_change_ccd_weight(self):
+        """Check that the handler change the 'ccd_weight'
+        """
+
+        ccd_weight = random.random()
+        parameters = {
+            'ccd_weight':ccd_weight
         }
         self.__assert_process_change_parameters('INFO', parameters)
-        self.assertEqual(str(age_weight), os.getenv("AGE_WEIGHT"))
+        self.assertEqual(str(ccd_weight), os.getenv("CCD_WEIGHT"))
+
 
 if __name__ == '__main__':
     unittest.main()

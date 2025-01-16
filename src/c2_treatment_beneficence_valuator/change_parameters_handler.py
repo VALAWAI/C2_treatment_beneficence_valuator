@@ -24,7 +24,23 @@ import os
 from message_service import MessageService
 from mov import MOV
 
-PROPERTY_WEIGHT_NAMES=["age_weight"]
+PROPERTY_WEIGHT_NAMES=["age_range_weight",
+	"ccd_weight",
+	"maca_weight",
+	"expected_survival_weight",
+	"frail_VIG_weight",
+	"clinical_risk_group_weight",
+	"has_social_support_weight",
+	"independence_at_admission_weight",
+	"independence_instrumental_activities_weight",
+	"has_advance_directives_weight",
+	"is_competent_weight",
+	"has_been_informed_weight",
+	"is_coerced_weight",
+	"has_cognitive_impairment_weight",
+	"has_emocional_pain_weight",
+	"discomfort_degree_weight"
+	]
 
 class ChangeParametersHandler:
 	"""The component that manage the changes of the component parameters.
