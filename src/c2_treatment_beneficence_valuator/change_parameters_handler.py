@@ -86,7 +86,7 @@ class ChangeParametersHandler:
 
 	def __update_weight(self,weight:float|None,env_property_name:str):
 		"""Update a weight that is used on the beneficence value alignment calculus.
-		
+
 		Parameters
 		----------
 		weight: float | None

@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import json
 import logging
 import os
 
@@ -27,52 +28,52 @@ from treatment_payload import TreatmentPayload
 
 
 class ReceivedTreatmentHandler:
-    """ The component that handle the messages with the treatemnt to valuate."""
+	""" The component that handle the messages with the treatemnt to valuate."""
 
-    def __init__(self,message_service:MessageService,mov:MOV):
-        """Initialize the handler
+	def __init__(self,message_service:MessageService,mov:MOV):
+		"""Initialize the handler
 
-        Parameters
-        ----------
-        message_service : MessageService
-            The service to receive or send messages thought RabbitMQ
-        mov : MOV
-            The service to interact with the MOV
-        """
-        self.message_service = message_service
-        self.mov = mov
-        self.message_service.listen_for('valawai/c2/treatment_beneficence_valuator/data/treatment',self.handle_message)
+		Parameters
+		----------
+		message_service : MessageService
+			The service to receive or send messages thought RabbitMQ
+		mov : MOV
+			The service to interact with the MOV
+		"""
+		self.message_service = message_service
+		self.mov = mov
+		self.message_service.listen_for('valawai/c2/treatment_beneficence_valuator/data/treatment',self.handle_message)
 
 
-    def handle_message(self, _ch, _method, _properties, body):
-        """ Manage the received messages on the channel valawai/c2/treatment_beneficence_valuator/data/treatment"""
+	def handle_message(self, _ch, _method, _properties, body):
+		""" Manage the received messages on the channel valawai/c2/treatment_beneficence_valuator/data/treatment"""
 
-        try:
+		try:
 
-			json_dict = json.loads(json_value)
+			json_dict = json.loads(body)
 
 			try:
 
-	            treatment = TreatmentPayload(**json_dict)
-	            self.mov.info("Received a treatment",treatment)
+				treatment = TreatmentPayload(**json_dict)
+				self.mov.info("Received a treatment",treatment)
 
-	            valuator = BeneficienceValuator()
-	            alignment = valuator.align_beneficence(treatment)
+				valuator = BeneficienceValuator()
+				alignment = valuator.align_beneficence(treatment)
 
-	            value_name = os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience")
-	            feedback_msg={
-	               "treatment_id": treatment.id,
-	               "value_name": value_name,
-	               "alignment": alignment
-	               }
-	            self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
-	            self.mov.info("Sent treatment value feedback",feedback_msg)
+				value_name = os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience")
+				feedback_msg = {
+						"treatment_id": treatment.id,
+						"value_name": value_name,
+						"alignment": alignment
+					}
+				self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
+				self.mov.info("Sent treatment value feedback",feedback_msg)
 
 			except ValueError as validation_error:
 
 				msg = f"Cannot process treatment, because {validation_error}"
 				self.mov.error(msg,json_dict)
 
-        except ValueError:
+		except ValueError:
 
-            logging.exception("Unexpected message %s",body)
+			logging.exception("Unexpected message %s",body)

@@ -71,7 +71,7 @@ class _RabbitMQConnection:
 
 			except (OSError,pika.exceptions.AMQPError):
 
-				logging.exception("Connection was closed, retrying...")
+				logging.warning("Connection was closed, retrying...")
 				time.sleep(retry_sleep_seconds)
 
 			else:
@@ -80,7 +80,9 @@ class _RabbitMQConnection:
 
 			tries+=1
 
-		raise pika.exceptions.AMQPError("Cannot connect with the RabbitMQ")
+		error_msg = "Cannot connect with the RabbitMQ"
+		logging.error(error_msg)
+		raise pika.exceptions.AMQPError(error_msg)
 
 	def close(self):
 		"""Close the connection."""
@@ -139,7 +141,8 @@ class MessageService:
 
 		except pika.exceptions.AMQPError as listen_error:
 
-			raise ValueError("Cannot listen from the RabbitMQ") from listen_error
+			error_msg = f"Cannot listen from the RabbitMQ at {host}:{port}"
+			raise ValueError(error_msg) from listen_error
 
 		try:
 
@@ -157,7 +160,8 @@ class MessageService:
 
 				logging.exception("Cannot close the listening connection to RabbitMQ")
 
-			raise ValueError("Cannot connect with the RabbitMQ") from publish_error
+			error_msg = f"Cannot connect from the RabbitMQ at {host}:{port}"
+			raise ValueError(error_msg) from publish_error
 
 
 	def close(self):

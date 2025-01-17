@@ -104,7 +104,8 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 			if 'total' in content and content['total'] >= min_value and 'logs' in content:
 				return content['logs']
 
-		assert False, "Could not get the logs from the MOV."
+		self.fail("Could not get the logs from the MOV.")
+		return None
 
 	def __assert_process_change_parameters(self, level:str, parameters:dict):
 		"""Check that
@@ -129,7 +130,7 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 					# Found the expected log
 					return
 
-		assert False, f"Not found a log with the level {level} and the payload {parameters}"
+		self.fail(f"Not found a log with the level {level} and the payload {parameters}")
 
 
 	def test_change_parameters(self):
