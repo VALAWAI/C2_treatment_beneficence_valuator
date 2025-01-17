@@ -44,9 +44,7 @@ addopts = [
 [tool.hatch.envs.test]
 dependencies = [
 	"pytest>=8.3.4",
-	"coverage>=7.6.10",
-	"coverage[toml]",
-	"pytest-cov"
+	"coverage>=7.6.10"
 	]
 	
 [tool.hatch.envs.hatch-test]
@@ -54,10 +52,11 @@ extra-dependencies = [
 	"requests>=2.32.3",
 	"unittest-parametrize>=1.6.0"
 	]
+	
 [tool.coverage.run]
 omit = [
     "tests/*"
 	]
 
-[tool.hatch.envs.test.scripts]
-cov = 'pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=pkg --cov=tests'
+[tool.coverage.report]
+show_missing = true

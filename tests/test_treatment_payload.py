@@ -16,10 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import unittest
-from pathlib import Path
-
+from json_resources import load_treatment_json
 from pydantic import ValidationError
 
 from c2_treatment_beneficence_valuator.patient_status_criteria import (
@@ -38,17 +36,10 @@ from c2_treatment_beneficence_valuator.treatment_payload import TreatmentAction,
 class TestTreatmentPayload(unittest.TestCase):
 	"""Class to test the treatment"""
 
-	def __load_treatment_json_as_dict(self):
-		"""Obtain the distionary defined in the treatment.json"""
-
-		with Path(__file__).parent.joinpath('treatment.json').open() as file:
-			return json.load(file)
-
 	def test_load_json(self):
 		"""Test can obtain a treatment from a json"""
 
-		value = self.__load_treatment_json_as_dict()
-		treatment = TreatmentPayload(**value)
+		treatment = TreatmentPayload(**load_treatment_json())
 		assert treatment.id == "treatment_1"
 		assert treatment.patient_id == "patient_1"
 		assert treatment.created_time == 1736865373
@@ -133,7 +124,8 @@ class TestTreatmentPayload(unittest.TestCase):
 		error = False
 		try:
 
-			json_value = self.__load_treatment_json_as_dict()
+			json_value = load_treatment_json()
+			print(json_value)
 			del json_value['id']
 			treatment = TreatmentPayload(**json_value)
 			assert treatment is None
@@ -150,7 +142,7 @@ class TestTreatmentPayload(unittest.TestCase):
 		error = False
 		try:
 
-			json_value = self.__load_treatment_json_as_dict()
+			json_value = load_treatment_json()
 			json_value['id']=""
 			treatment = TreatmentPayload(**json_value)
 			assert treatment is None
@@ -164,7 +156,7 @@ class TestTreatmentPayload(unittest.TestCase):
 	def test_load_treatment_without_patient_id(self):
 		"""Test can load a treatment without a patient identifier"""
 
-		json_value = self.__load_treatment_json_as_dict()
+		json_value = load_treatment_json()
 		del json_value['patient_id']
 		treatment = TreatmentPayload(**json_value)
 		assert treatment.patient_id is None
@@ -172,7 +164,7 @@ class TestTreatmentPayload(unittest.TestCase):
 	def test_load_treatment_without_created_time(self):
 		"""Test can load a treatment without a created time"""
 
-		json_value = self.__load_treatment_json_as_dict()
+		json_value = load_treatment_json()
 		del json_value['created_time']
 		treatment = TreatmentPayload(**json_value)
 		assert treatment.created_time is None
@@ -183,7 +175,7 @@ class TestTreatmentPayload(unittest.TestCase):
 		error = False
 		try:
 
-			json_value = self.__load_treatment_json_as_dict()
+			json_value = load_treatment_json()
 			del json_value['before_status']
 			treatment = TreatmentPayload(**json_value)
 			assert treatment is None
@@ -201,7 +193,7 @@ class TestTreatmentPayload(unittest.TestCase):
 		error = False
 		try:
 
-			json_value = self.__load_treatment_json_as_dict()
+			json_value = load_treatment_json()
 			del json_value['actions']
 			treatment = TreatmentPayload(**json_value)
 			assert treatment is None
@@ -218,7 +210,7 @@ class TestTreatmentPayload(unittest.TestCase):
 		error = False
 		try:
 
-			json_value = self.__load_treatment_json_as_dict()
+			json_value = load_treatment_json()
 			json_value['actions']=[]
 			treatment = TreatmentPayload(**json_value)
 			assert treatment is None
@@ -233,7 +225,7 @@ class TestTreatmentPayload(unittest.TestCase):
 	def test_load_treatment_without_expected_status(self):
 		"""Test can load a treatment without a expected status"""
 
-		json_value = self.__load_treatment_json_as_dict()
+		json_value = load_treatment_json()
 		del json_value['expected_status']
 		treatment = TreatmentPayload(**json_value)
 		assert treatment.expected_status is None

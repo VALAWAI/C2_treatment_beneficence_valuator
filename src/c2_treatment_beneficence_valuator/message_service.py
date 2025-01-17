@@ -176,7 +176,7 @@ class MessageService:
 
 			logging.exception("Cannot close the connection to RabbitMQ")
 
-		except Exception:
+		except BaseException:
 
 			logging.exception("Unexpected close RabbitMQ connection status")
 
@@ -246,7 +246,7 @@ class MessageService:
 
 			logging.info("Closed connection")
 
-		except Exception:
+		except BaseException:
 
 			logging.exception("Consuming messages error.")
 

@@ -16,18 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import os
 import random
 import re
-import time
 import unittest
-import urllib.parse
 import uuid
-
-import requests
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
-
+from mov_api import mov_get_log_message_with
 from c2_treatment_beneficence_valuator.change_parameters_handler import ChangeParametersHandler
 from c2_treatment_beneficence_valuator.message_service import MessageService
 from c2_treatment_beneficence_valuator.mov import MOV
@@ -60,8 +55,8 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 
 		cls.message_service = MessageService()
 		cls.mov = MOV(cls.message_service)
-		cls.msgs = []
 		cls.handler = ChangeParametersHandler(cls.message_service, cls.mov)
+		cls.message_service.start_consuming_and_forget()
 
 	@classmethod
 	def tearDownClass(cls):
@@ -85,28 +80,6 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 		assert len(cm.output) == 1
 		assert re.search("Unexpected message \\{", cm.output[0])
 
-	def __capture_last_logs_from_mov(self, min_value:int=1):
-		"""Capture the last logs messages provided in the MOV"""
-
-		url_params = urllib.parse.urlencode(
-				{
-					'order':'-timestamp',
-					'offset':0,
-					'limit':100
-				}
-			)
-		url = f"http://host.docker.internal:8083/v1/logs?{url_params}"
-		for _i in range(10):
-
-			time.sleep(2)
-			response = requests.get(url)
-			content = response.json()
-			if 'total' in content and content['total'] >= min_value and 'logs' in content:
-				return content['logs']
-
-		self.fail("Could not get the logs from the MOV.")
-		return None
-
 	def __assert_process_change_parameters(self, level:str, parameters:dict):
 		"""Check that
 
@@ -117,20 +90,9 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 		parameters: object
 		The parameters that can not be set
 		"""
-		self.message_service.start_consuming_and_forget()
+
 		self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/control/parameters', parameters)
-
-		expected_payload = json.dumps(parameters)
-		for _i in range(11):
-
-			logs = self.__capture_last_logs_from_mov(2)
-			for log in logs:
-
-				if 'payload' in log and log['payload'] == expected_payload and 'level' in log and log['level'] == level:
-					# Found the expected log
-					return
-
-		self.fail(f"Not found a log with the level {level} and the payload {parameters}")
+		mov_get_log_message_with(level,parameters)
 
 
 	def test_change_parameters(self):

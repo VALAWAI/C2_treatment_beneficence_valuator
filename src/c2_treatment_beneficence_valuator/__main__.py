@@ -135,7 +135,7 @@ def configure_log():
             }
         )
 
-    except Exception:
+    except BaseException:
 
         logging.basicConfig(level=logging.INFO)
         logging.exception("Could not configure the logging")

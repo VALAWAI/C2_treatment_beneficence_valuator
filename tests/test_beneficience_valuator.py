@@ -20,7 +20,7 @@ import json
 import math
 import unittest
 from pathlib import Path
-
+from json_resources import load_treatment_json
 from c2_treatment_beneficence_valuator.beneficience_valuator import BeneficienceValuator
 from c2_treatment_beneficence_valuator.patient_status_criteria import PatientStatusCriteria
 from c2_treatment_beneficence_valuator.treatment_payload import TreatmentPayload
@@ -52,15 +52,12 @@ class TestBeneficienceValuator(unittest.TestCase):
 				discomfort_degree_weight=0.057
 			)
 
-		with Path(__file__).parent.joinpath('treatment.json').open() as file:
-			self.treatment_json = json.load(file)
 
 	def test_align_beneficence(self):
 		"""Test calculate alignment for a treatment
 		"""
 
-		treatment = TreatmentPayload(**self.treatment_json)
-
+		treatment = TreatmentPayload(**load_treatment_json())
 		alignment = self.valuator.align_beneficence(treatment)
 		assert math.isclose(alignment, 0.39184), 'Unexpected treatment beneficience alignment value'
 
@@ -68,8 +65,8 @@ class TestBeneficienceValuator(unittest.TestCase):
 		"""Test calculate alignment with an empty treatment
 		"""
 
-		del self.treatment_json['expected_status']
-		treatment = TreatmentPayload(**self.treatment_json)
+		treatment = TreatmentPayload(**load_treatment_json())
+		treatment.expected_status = None
 		alignment = self.valuator.align_beneficence(treatment)
 		assert math.isclose(alignment, 0.0), 'Unexpected treatment beneficience alignment value'
 
@@ -77,7 +74,7 @@ class TestBeneficienceValuator(unittest.TestCase):
 		"""Test calculate alignment with an empty treatment
 		"""
 
-		treatment = TreatmentPayload(**self.treatment_json)
+		treatment = TreatmentPayload(**load_treatment_json())
 		treatment.expected_status = PatientStatusCriteria()
 		alignment = self.valuator.align_beneficence(treatment)
 		assert math.isclose(alignment, -0.32445), 'Unexpected treatment beneficience alignment value'

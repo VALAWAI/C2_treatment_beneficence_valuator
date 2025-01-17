@@ -20,9 +20,8 @@ import json
 import math
 import unittest
 from pathlib import Path
-
+from json_resources import load_change_parameters_json
 from pydantic import ValidationError
-
 from c2_treatment_beneficence_valuator.change_parameters_payload import ChangeParametersPayload
 
 
@@ -30,17 +29,11 @@ class TestChangeParametersPayload(unittest.TestCase):
 	"""Class to test the change_parameters
 	"""
 
-	def __load_change_parameters_json_as_dict(self):
-		"""Obtain the distionary defined in the change_parameters.json"""
-
-		with Path(__file__).parent.joinpath('change_parameters.json').open() as file:
-			return json.load(file)
-
 
 	def test_load_json(self):
 		"""Test can obtain a change_parameters from a json"""
 
-		json_dict = self.__load_change_parameters_json_as_dict()
+		json_dict = load_change_parameters_json()
 		change_parameters = ChangeParametersPayload(**json_dict)
 		assert math.isclose(change_parameters.age_range_weight,0.1)
 		assert math.isclose(change_parameters.ccd_weight, 0.2)
@@ -77,7 +70,7 @@ class TestChangeParametersPayload(unittest.TestCase):
 		error = False
 		try:
 
-			json_value = self.__load_change_parameters_json_as_dict()
+			json_value = load_change_parameters_json()
 			json_value['age_range_weight'] = "Bad value"
 			payload = ChangeParametersPayload(**json_value)
 			assert payload is None

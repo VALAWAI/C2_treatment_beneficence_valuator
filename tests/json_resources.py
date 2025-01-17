@@ -10,20 +10,27 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
-import sys
-import logging
+import json
+from pathlib import Path
 
-    
-test_path = os.path.dirname(os.path.realpath(__file__))
-if test_path not in sys.path:
-    sys.path.append(test_path)
-    
-logging.basicConfig(filename='.test.log', level=logging.DEBUG)
+def __load_json(file:str):
+	"""Load the json file"""
+	with Path(__file__).parent.joinpath(file).open() as file:
+		return json.load(file)
+
+def load_treatment_json():
+	"""Obtain the distionary defined in the treatment.json"""
+
+	return __load_json('treatment.json')
+	
+def load_change_parameters_json():
+	"""Obtain the distionary defined in the change_parameters.json"""
+
+	return __load_json('change_parameters.json')

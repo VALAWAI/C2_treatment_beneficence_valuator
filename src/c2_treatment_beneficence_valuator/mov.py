@@ -191,14 +191,15 @@ class MOV:
 			The payload associated to the log message.
 		"""
 
-		msg = {"level":level, "message": msg}
+		msg = msg.replace("{"," ")
+		add_log_payload = {"level":level, "message": msg}
 
 		if payload is not None:
 
-			msg["payload"] = json.dumps(payload)
+			add_log_payload["payload"] = json.dumps(payload)
 
 		if self.component_id is not None:
 
-			msg["component_id"] = self.component_id
+			add_log_payload["component_id"] = self.component_id
 
-		self.message_service.publish_to('valawai/log/add', msg)
+		self.message_service.publish_to('valawai/log/add', add_log_payload)
