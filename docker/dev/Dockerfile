@@ -8,7 +8,7 @@ COPY pyproject.toml .
 COPY LICENSE .
 COPY *.md .
 COPY src/ src/
-RUN pip install -e .
+RUN pip install -e . && pip install hatch
 
 RUN echo "PS1='\[\033[01;32m\]c2_treatment_beneficence_valuator@dev\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$ '" >> /root/.bashrc
 RUN echo "alias run=\"RABBITMQ_HOST=host.docker.internal python src/c2_treatment_beneficence_valuator\"" >> /root/.bashrc
