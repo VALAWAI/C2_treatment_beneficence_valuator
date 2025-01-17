@@ -37,14 +37,11 @@ class TestChangeParametersPayload(unittest.TestCase):
 			return json.load(file)
 
 
-	def test_from_json(self):
+	def test_load_json(self):
 		"""Test can obtain a change_parameters from a json"""
 
-		value = ''
-		with Path(__file__).parent.joinpath('change_parameters.json').open() as file:
-			value = file.read()
-
-		change_parameters = ChangeParametersPayload.from_json(value)
+		json_dict = self.__load_change_parameters_json_as_dict()
+		change_parameters = ChangeParametersPayload(**json_dict)
 		assert math.isclose(change_parameters.age_range_weight,0.1)
 		assert math.isclose(change_parameters.ccd_weight, 0.2)
 		assert math.isclose(change_parameters.maca_weight, 0.3)
@@ -71,7 +68,7 @@ class TestChangeParametersPayload(unittest.TestCase):
 	def test_load_empty_json(self):
 		"""Test can not load a change parameters payload from an empty json"""
 
-		change_parameters = ChangeParametersPayload.from_json("{}")
+		change_parameters = ChangeParametersPayload()
 		assert change_parameters is not None
 
 	def test_fail_load_change_parameters_without_bad_field_value(self):

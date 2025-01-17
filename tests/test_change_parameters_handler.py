@@ -17,7 +17,6 @@
 # along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import logging
 import os
 import random
 import re
@@ -52,41 +51,29 @@ PROPERTY_NAME_PARAMETERS = [
 		param("discomfort_degree_weight")
 	]
 
-
 class TestChangeParametersHandler(ParametrizedTestCase):
 	"""Class to test the handler of the receiver e-mails to reply"""
 
-	def setUp(self):
+	@classmethod
+	def setUpClass(cls):
 		"""Create the handler."""
 
-		self.message_service = MessageService()
-		self.mov = MOV(self.message_service)
-		self.msgs = []
-		self.handler = ChangeParametersHandler(self.message_service, self.mov)
+		cls.message_service = MessageService()
+		cls.mov = MOV(cls.message_service)
+		cls.msgs = []
+		cls.handler = ChangeParametersHandler(cls.message_service, cls.mov)
 
+	@classmethod
+	def tearDownClass(cls):
+		"""Stops the message service."""
+
+		cls.mov.unregister_component()
+		cls.message_service.close()
 
 	def random_weight(self):
 		"""Generate a random weight value"""
 
 		return random.randrange(0, 10000)/10000.0
-
-	def tearDown(self):
-		"""Stops the message service."""
-
-		self.mov.unregister_component()
-		self.message_service.close()
-
-	def callback(self, _ch, _method, _properties, body):
-		"""Called when a message is received from a listener."""
-
-		try:
-
-			logging.debug("Received %s", body)
-			msg = json.loads(body)
-			self.msgs.append(msg)
-
-		except ValueError:
-			pass
 
 	def test_capture_bad_json_message_body(self):
 		"""Check that the handler can manage when the body is not a valid json"""
@@ -117,8 +104,7 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 			if 'total' in content and content['total'] >= min_value and 'logs' in content:
 				return content['logs']
 
-		self.fail("Could not get the logs from the MOV")
-		return None
+		assert False, "Could not get the logs from the MOV."
 
 	def __assert_process_change_parameters(self, level:str, parameters:dict):
 		"""Check that
@@ -143,7 +129,8 @@ class TestChangeParametersHandler(ParametrizedTestCase):
 					# Found the expected log
 					return
 
-		self.fail("Not generated the expected logs to the MOV")
+		assert False, f"Not found a log with the level {level} and the payload {parameters}"
+
 
 	def test_change_parameters(self):
 		"""Check that the handler change the parameters"""

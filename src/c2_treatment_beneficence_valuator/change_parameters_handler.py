@@ -48,20 +48,53 @@ class ChangeParametersHandler:
 	def handle_message(self, _ch, _method, _properties, body):
 		"""Manage the received messages on the channel valawai/c2/treatment_beneficence_valuator/control/parameters
 		"""
+
 		try:
 
 			json_dict = json.loads(body)
-			# Create the model only to check it
-			ChangeParametersPayload(**json_dict)
 
-			for property_name in json_dict:
+			try:
 
-				weight = json_dict[property_name]
-				env_property_name = property_name.upper()
-				os.environ[env_property_name] = str(weight)
+				parameters = ChangeParametersPayload(**json_dict)
+				self.__update_weight(parameters.age_range_weight,"AGE_RANGE_WEIGHT")
+				self.__update_weight(parameters.ccd_weight,"CCD_WEIGHT")
+				self.__update_weight(parameters.maca_weight,"MACA_WEIGHT")
+				self.__update_weight(parameters.expected_survival_weight,"EXPECTED_SURVIVAL_WEIGHT")
+				self.__update_weight(parameters.frail_VIG_weight,"FRAIL_VIG_WEIGHT")
+				self.__update_weight(parameters.clinical_risk_group_weight,"CLINICAL_RISK_GROUP_WEIGHT")
+				self.__update_weight(parameters.has_social_support_weight,"HAS_SOCIAL_SUPPORT_WEIGHT")
+				self.__update_weight(parameters.independence_at_admission_weight,"INDEPENDENCE_AT_ADMISSION_WEIGHT")
+				self.__update_weight(parameters.independence_instrumental_activities_weight,"INDEPENDENCE_INSTRUMENTAL_ACTIVITIES_WEIGHT")
+				self.__update_weight(parameters.has_advance_directives_weight,"HAS_ADVANCE_DIRECTIVES_WEIGHT")
+				self.__update_weight(parameters.is_competent_weight,"IS_COMPETENT_WEIGHT")
+				self.__update_weight(parameters.has_been_informed_weight,"HAS_BEEN_INFORMED_WEIGHT")
+				self.__update_weight(parameters.is_coerced_weight,"IS_COERCED_WEIGHT")
+				self.__update_weight(parameters.has_cognitive_impairment_weight,"HAS_COGNITIVE_IMPAIRMENT_WEIGHT")
+				self.__update_weight(parameters.has_emocional_pain_weight,"HAS_EMOCIONAL_PAIN_WEIGHT")
+				self.__update_weight(parameters.discomfort_degree_weight,"DISCOMFORT_DEGREE_WEIGHT")
 
-			self.mov.info("Changed the component parameters",json_dict)
+				self.mov.info("Changed the component parameters",json_dict)
+
+			except ValueError as validation_error:
+
+				msg = f"Cannot change the parameters, because {validation_error}"
+				self.mov.error(msg,json_dict)
 
 		except ValueError:
 
 			logging.exception("Unexpected message %s",body)
+
+	def __update_weight(self,weight:float|None,env_property_name:str):
+		"""Update a weight that is used on the beneficence value alignment calculus.
+		
+		Parameters
+		----------
+		weight: float | None
+			The new value for the weight.
+		env_property_name: str
+			The name of the property that contains the parameter.
+		"""
+
+		if weight is not None:
+
+			os.environ[env_property_name] = str(weight)

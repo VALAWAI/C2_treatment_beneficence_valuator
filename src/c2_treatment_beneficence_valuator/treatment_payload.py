@@ -17,7 +17,6 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #
 
-import json
 from enum import Enum
 
 from patient_status_criteria import PatientStatusCriteria
@@ -70,19 +69,3 @@ class TreatmentPayload(BaseModel):
 	actions:  list[TreatmentAction] = Field(min_length=1,title="The treatment actions to apply over the patient.")
 	expected_status: PatientStatusCriteria | None = Field(default=None,title="The expected status of the patient after applying the treatment.")
 
-	@classmethod
-	def from_json(cls, json_value:str):
-		"""Loads a treatment from a JSON inside a string.
-
-		Parameters
-		----------
-		json_value: str
-			The encoded treatment in JSON.
-
-		Returns
-		----------
-		TreatmentPayload
-			The model encoded in the JSON.
-		"""
-		json_dict = json.loads(json_value)
-		return TreatmentPayload(**json_dict)

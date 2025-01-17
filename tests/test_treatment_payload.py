@@ -44,14 +44,11 @@ class TestTreatmentPayload(unittest.TestCase):
 		with Path(__file__).parent.joinpath('treatment.json').open() as file:
 			return json.load(file)
 
-	def test_from_json(self):
+	def test_load_json(self):
 		"""Test can obtain a treatment from a json"""
 
-		value = ''
-		with Path(__file__).parent.joinpath('treatment.json').open() as file:
-			value = file.read()
-
-		treatment = TreatmentPayload.from_json(value)
+		value = self.__load_treatment_json_as_dict()
+		treatment = TreatmentPayload(**value)
 		assert treatment.id == "treatment_1"
 		assert treatment.patient_id == "patient_1"
 		assert treatment.created_time == 1736865373
@@ -79,7 +76,7 @@ class TestTreatmentPayload(unittest.TestCase):
 		assert len(treatment.actions) == 1
 		assert treatment.actions[0] == TreatmentAction.MEDIUM_CLINICAL_TRIAL
 
-		
+
 		assert treatment.expected_status is not None
 		assert treatment.expected_status.age_range == AgeRangeOption.AGE_BETWEEN_80_AND_89
 		assert treatment.expected_status.ccd  is True
@@ -121,7 +118,7 @@ class TestTreatmentPayload(unittest.TestCase):
 		error = False
 		try:
 
-			treatment = TreatmentPayload.from_json("{}")
+			treatment = TreatmentPayload()
 			assert treatment is None
 
 		except ValidationError:

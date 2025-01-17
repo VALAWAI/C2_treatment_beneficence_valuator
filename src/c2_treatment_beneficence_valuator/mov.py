@@ -22,7 +22,6 @@ import os.path
 import re
 
 from message_service import MessageService
-from pydantic import BaseModel
 
 
 class MOV:
@@ -194,11 +193,7 @@ class MOV:
 
 		msg = {"level":level, "message": msg}
 
-		if isinstance(payload,BaseModel):
-
-			msg["payload"] = payload.model_dump_json()
-
-		elif payload is not None:
+		if payload is not None:
 
 			msg["payload"] = json.dumps(payload)
 

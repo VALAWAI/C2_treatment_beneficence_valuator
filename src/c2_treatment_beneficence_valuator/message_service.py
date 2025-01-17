@@ -133,12 +133,12 @@ class MessageService:
 		"""
 
 		try:
-			
+
 			self.listen_connection = _RabbitMQConnection(host=host,port=port,username=username,password=password,max_retries=max_retries,retry_sleep_seconds=retry_sleep_seconds)
 			logging.debug("Opened Listening connection to RabbitMQ")
 
 		except pika.exceptions.AMQPError as listen_error:
-			
+
 			raise ValueError("Cannot listen from the RabbitMQ") from listen_error
 
 		try:
@@ -150,13 +150,13 @@ class MessageService:
 		except pika.exceptions.AMQPError as publish_error:
 
 			try:
-			
+
 				self.listen_connection.close()
-				
+
 			except pika.exceptions.AMQPError:
-				
-				logging.error("Cannot close the listening connection to RabbitMQ")
-				
+
+				logging.exception("Cannot close the listening connection to RabbitMQ")
+
 			raise ValueError("Cannot connect with the RabbitMQ") from publish_error
 
 
@@ -164,22 +164,19 @@ class MessageService:
 		"""Close the connections."""
 
 		try:
-			
+
 			self.listen_connection.close()
-
-		except pika.exceptions.AMQPError:
-				
-			logging.error("Cannot close the listening connection to RabbitMQ")
-
-		try:
-			
 			self.publish_connection.close()
 
 		except pika.exceptions.AMQPError:
-				
-			logging.error("Cannot close the publish connection to RabbitMQ")
-			
-		
+
+			logging.exception("Cannot close the connection to RabbitMQ")
+
+		except Exception:
+
+			logging.exception("Unexpected close RabbitMQ connection status")
+
+
 
 	def listen_for(self,queue:str,callback):
 		"""Register a input channel
@@ -214,19 +211,19 @@ class MessageService:
 		"""
 
 		try:
-			
+
 			body=json.dumps(msg)
 			properties=pika.BasicProperties(content_type='application/json')
 			self.publish_connection.channel.basic_publish(exchange='',routing_key=queue,body=body,properties=properties)
 			logging.debug("Publish message to the queue %s",queue)
-		
+
 		except pika.exceptions.AMQPError:
-				
-			logging.error("Cannot publish a msg in the queue %s",queue)
+
+			logging.exception("Cannot publish a msg in the queue %s",queue)
 
 		except ValueError:
-				
-			logging.error("Cannot publish a msg because can not encode teh message")
+
+			logging.exception("Cannot publish a msg because can not encode the message")
 
 
 	def start_consuming(self):
@@ -241,7 +238,7 @@ class MessageService:
 
 			logging.info("Stop listening for events")
 
-		except pika.exceptions.ConnectionClosedByBroker:
+		except pika.exceptions.AMQPError:
 
 			logging.info("Closed connection")
 

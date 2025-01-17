@@ -23,7 +23,7 @@ import os
 from beneficience_valuator import BeneficienceValuator
 from message_service import MessageService
 from mov import MOV
-from treatment import Treatment
+from treatment_payload import TreatmentPayload
 
 
 class ReceivedTreatmentHandler:
@@ -49,20 +49,29 @@ class ReceivedTreatmentHandler:
 
         try:
 
-            treatment=Treatment.from_json(body)
-            self.mov.info("Received a treatment",treatment)
+			json_dict = json.loads(json_value)
 
-            valuator = BeneficienceValuator()
-            alignment = valuator.align_beneficence(treatment)
+			try:
 
-            value_name = os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience")
-            feedback_msg={
-               "treatment_id": treatment.id,
-               "value_name": value_name,
-               "alignment": alignment
-               }
-            self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
-            self.mov.info("Sent treatment value feedback",feedback_msg)
+	            treatment = TreatmentPayload(**json_dict)
+	            self.mov.info("Received a treatment",treatment)
+
+	            valuator = BeneficienceValuator()
+	            alignment = valuator.align_beneficence(treatment)
+
+	            value_name = os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience")
+	            feedback_msg={
+	               "treatment_id": treatment.id,
+	               "value_name": value_name,
+	               "alignment": alignment
+	               }
+	            self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
+	            self.mov.info("Sent treatment value feedback",feedback_msg)
+
+			except ValueError as validation_error:
+
+				msg = f"Cannot process treatment, because {validation_error}"
+				self.mov.error(msg,json_dict)
 
         except ValueError:
 

@@ -17,7 +17,6 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #
 
-import json
 
 from pydantic import BaseModel, Field
 
@@ -41,20 +40,3 @@ class ChangeParametersPayload(BaseModel):
 	has_cognitive_impairment_weight: float | None = Field(default=None, ge=0.0, le=1.0, title="The importance of the has cognitive impairment when calculate the beneficeince value.")
 	has_emocional_pain_weight: float | None = Field(default=None, ge=0.0, le=1.0, title="The importance of the has emocional pain when calculate the beneficeince value.")
 	discomfort_degree_weight: float | None = Field(default=None, ge=0.0, le=1.0, title="The importance of the discomfort degree when calculate the beneficeince value.")
-
-	@classmethod
-	def from_json(cls, json_value:str):
-		"""Loads a change parameters from a JSON inside a string.
-
-		Parameters
-		----------
-		json_value: str
-			The encoded change parameters in JSON.
-
-		Returns
-		----------
-		ChangeParametersPayload
-			The model encoded in the JSON.
-		"""
-		json_dict = json.loads(json_value)
-		return ChangeParametersPayload(**json_dict)
