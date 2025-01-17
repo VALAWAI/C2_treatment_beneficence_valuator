@@ -1,5 +1,5 @@
 #
-# This file is part of the C2_treatment_beneficense_valuator distribution
+# This file is part of the C2_treatment_beneficence_valuator distribution
 # (https://github.com/VALAWAI/c2_treatment_beneficence_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 #

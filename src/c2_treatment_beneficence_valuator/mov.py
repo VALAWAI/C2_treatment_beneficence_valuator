@@ -1,6 +1,6 @@
 #
-# This file is part of the C2_treatment_beneficense_valuator distribution
-# (https://github.com/VALAWAI/C2_treatment_beneficense_valuator).
+# This file is part of the C2_treatment_beneficence_valuator distribution
+# (https://github.com/VALAWAI/C2_treatment_beneficence_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 #
 # This program is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ class MOV:
 
 		return {
 					"type": "C2",
-					"name": "c2_treatment_beneficense_valuator",
+					"name": "c2_treatment_beneficence_valuator",
 					"version": version,
 					"asyncapi_yaml":async_api
 				}

@@ -1,6 +1,6 @@
 #
-# This file is part of the C2_treatment_beneficense_valuator distribution
-# (https://github.com/VALAWAI/C2_treatment_beneficense_valuator).
+# This file is part of the C2_treatment_beneficence_valuator distribution
+# (https://github.com/VALAWAI/C2_treatment_beneficence_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 #
 # This program is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ class TestMOV(unittest.TestCase):
 			query = {
 				'id':query_id,
 				'type':'C2',
-				'pattern':'c2_treatment_beneficense_valuator',
+				'pattern':'c2_treatment_beneficence_valuator',
 				'offset':0,
 				'limit':1000
 			}
@@ -119,7 +119,7 @@ class TestMOV(unittest.TestCase):
 			query = {
 				'id':query_id,
 				'type':'C2',
-				'pattern':'c2_treatment_beneficense_valuator',
+				'pattern':'c2_treatment_beneficence_valuator',
 				'offset':0,
 				'limit':1000
 			}

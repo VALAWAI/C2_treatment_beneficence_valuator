@@ -1,6 +1,6 @@
 #
-# This file is part of the C2_change_parameters_beneficense_valuator distribution
-# (https://github.com/VALAWAI/C2_change_parameters_beneficense_valuator).
+# This file is part of the C2_change_parameters_beneficence_valuator distribution
+# (https://github.com/VALAWAI/C2_change_parameters_beneficence_valuator).
 # Copyright (c) 2022-2026 VALAWAI (https://valawai.eu/).
 #
 # This program is free software: you can redistribute it and/or modify
