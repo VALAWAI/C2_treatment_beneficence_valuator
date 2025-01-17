@@ -17,11 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
-import sys
-import unittest
 import json
 import time
+import unittest
 
 from c2_treatment_beneficence_valuator.message_service import MessageService
 

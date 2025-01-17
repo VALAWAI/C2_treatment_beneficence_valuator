@@ -17,19 +17,22 @@
 # along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 
+import json
+import logging
+import math
+import os
+import time
 import unittest
-from c2_treatment_beneficence_valuator.received_treatment_handler import ReceivedTreatmentHandler
-from c2_treatment_beneficence_valuator.treatment_payload import TreatmentPayload
+import uuid
+
+from json_resources import load_treatment_json
+from mov_api import mov_get_log_message_with
+
 from c2_treatment_beneficence_valuator.message_service import MessageService
 from c2_treatment_beneficence_valuator.mov import MOV
-from json_resources import load_treatment_json
-import uuid
-import os
-import math
-import time
-import logging
-import json
-from mov_api import mov_get_log_message_with
+from c2_treatment_beneficence_valuator.received_treatment_handler import ReceivedTreatmentHandler
+from c2_treatment_beneficence_valuator.treatment_payload import TreatmentPayload
+
 
 class TestReceivedTreatmentHandler(unittest.TestCase):
 	"""Class to test the manage of a received treatment."""
@@ -63,8 +66,8 @@ class TestReceivedTreatmentHandler(unittest.TestCase):
 			cls.msgs.append(msg)
 
 		except ValueError:
-			
-			logging.error("Unexpected %s", body)
+
+			logging.exception("Unexpected %s", body)
 
 	def __assert_evaluate_treatment(self, treatment:TreatmentPayload,expected_value:float):
 		"""Check that the handler evaluate a treatment."""
@@ -88,36 +91,35 @@ class TestReceivedTreatmentHandler(unittest.TestCase):
 					return msg
 
 			time.sleep(3)
- 
-		print(self.msgs)
+
 		self.fail("Not evaluated treatment")
 		return None
-		
+
 	def test_evaluate_treatment(self):
 		"""Check that a treatment has been evaluated."""
-		
+
 		treatment = TreatmentPayload(**load_treatment_json())
 		self.__assert_evaluate_treatment(treatment,0.39184)
 
 	def test_evaluate_treatment_without_expected_status(self):
 		"""Check that a treatment without expected status has been evaluated."""
-		
+
 		treatment = TreatmentPayload(**load_treatment_json())
 		treatment.expected_status = None
 		self.__assert_evaluate_treatment(treatment,0.0)
 
 	def test_not_evaluate_treatment_without_id(self):
 		"""Check that the not evaluate a treatement without an identifier."""
-		
+
 		payload = load_treatment_json()
-		del payload['id'] 
+		del payload['id']
 		payload['patient_id'] = str(uuid.uuid4())
 		self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment', payload)
 		mov_get_log_message_with('ERROR',payload)
 
 	def test_not_evaluate_treatment_without_before_status(self):
 		"""Check that the not evaluate a treatement without before status."""
-		
+
 		payload = load_treatment_json()
 		payload['id'] = str(uuid.uuid4())
 		del payload['before_status']
@@ -126,7 +128,7 @@ class TestReceivedTreatmentHandler(unittest.TestCase):
 
 	def test_not_evaluate_treatment_without_actions(self):
 		"""Check that the not evaluate a treatement without actions."""
-		
+
 		payload = load_treatment_json()
 		payload['id'] = str(uuid.uuid4())
 		del payload['actions']
@@ -135,7 +137,7 @@ class TestReceivedTreatmentHandler(unittest.TestCase):
 
 	def test_not_evaluate_treatment_with_empty_actions(self):
 		"""Check that the not evaluate a treatement with empty actions."""
-		
+
 		payload = load_treatment_json()
 		payload['id'] = str(uuid.uuid4())
 		payload['actions'] = []

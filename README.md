@@ -189,9 +189,10 @@ to so some common action.
 
 * **run** to start the component.
 * **testAll** to run all the unit tests
-* **coverage** to run all the unit tests and obtain its coverage.
 * **test test/test_something.py** to run the tests defined on the file **test_something.py**
 * **test test/test_something.py::TestClassName::test_do_something** to run the test named **test_do_something** defined on the class **TestClassName** defined in the file **test_something.py**
+* **coverage** to run all the unit tests and obtain its coverage.
+* **fmt** to run the static analyzer over the code.
 
 Also, this starts the tools:
 

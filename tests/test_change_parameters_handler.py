@@ -21,8 +21,10 @@ import random
 import re
 import unittest
 import uuid
-from unittest_parametrize import ParametrizedTestCase, param, parametrize
+
 from mov_api import mov_get_log_message_with
+from unittest_parametrize import ParametrizedTestCase, param, parametrize
+
 from c2_treatment_beneficence_valuator.change_parameters_handler import ChangeParametersHandler
 from c2_treatment_beneficence_valuator.message_service import MessageService
 from c2_treatment_beneficence_valuator.mov import MOV

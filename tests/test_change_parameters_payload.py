@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import math
 import unittest
-from pathlib import Path
+
 from json_resources import load_change_parameters_json
 from pydantic import ValidationError
+
 from c2_treatment_beneficence_valuator.change_parameters_payload import ChangeParametersPayload
 
 

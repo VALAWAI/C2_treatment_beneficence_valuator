@@ -24,8 +24,9 @@ import os
 from beneficience_valuator import BeneficienceValuator
 from message_service import MessageService
 from mov import MOV
-from treatment_payload import TreatmentPayload
 from pydantic import ValidationError
+from treatment_payload import TreatmentPayload
+
 
 class ReceivedTreatmentHandler:
 	""" The component that handle the messages with the treatemnt to valuate."""

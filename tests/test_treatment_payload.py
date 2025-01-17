@@ -17,6 +17,7 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 from json_resources import load_treatment_json
 from pydantic import ValidationError
 
@@ -125,7 +126,6 @@ class TestTreatmentPayload(unittest.TestCase):
 		try:
 
 			json_value = load_treatment_json()
-			print(json_value)
 			del json_value['id']
 			treatment = TreatmentPayload(**json_value)
 			assert treatment is None

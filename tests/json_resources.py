@@ -20,6 +20,7 @@
 import json
 from pathlib import Path
 
+
 def __load_json(file:str):
 	"""Load the json file"""
 	with Path(__file__).parent.joinpath(file).open() as file:
@@ -29,7 +30,7 @@ def load_treatment_json():
 	"""Obtain the distionary defined in the treatment.json"""
 
 	return __load_json('treatment.json')
-	
+
 def load_change_parameters_json():
 	"""Obtain the distionary defined in the change_parameters.json"""
 

@@ -20,11 +20,13 @@ import json
 import logging
 import os
 import re
+import time
 import unittest
 import uuid
+
 from mov_api import mov_get_log_message_with
+
 from c2_treatment_beneficence_valuator.message_service import MessageService
-import time
 from c2_treatment_beneficence_valuator.mov import MOV
 
 

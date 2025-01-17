@@ -17,10 +17,12 @@
 # along with this program.If not, see <http://www.gnu.org/licenses/>.
 #
 
-import requests
-import urllib.parse
-import time
 import json
+import time
+import urllib.parse
+
+import requests
+
 
 def mov_get_log_message_with(level: str, payload: dict):
 	"""Ask to the MOV for a log message with the specified level and payload"""
@@ -41,12 +43,12 @@ def mov_get_log_message_with(level: str, payload: dict):
 		response = requests.get(url)
 		content = response.json()
 		if 'total' in content and content['total'] > 0 and 'logs' in content:
-			
+
 			for log in content['logs']:
 
 				if 'payload' in log and log['payload'] == expected_payload:
-				 
+
 					return log
 
 	error_msg = "Not found any log that match the level and payload in the MOV."
-	raise AssertError(error_msg)
+	raise AssertionError(error_msg)

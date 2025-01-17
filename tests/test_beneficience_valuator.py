@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import math
 import unittest
-from pathlib import Path
+
 from json_resources import load_treatment_json
+
 from c2_treatment_beneficence_valuator.beneficience_valuator import BeneficienceValuator
 from c2_treatment_beneficence_valuator.patient_status_criteria import PatientStatusCriteria
 from c2_treatment_beneficence_valuator.treatment_payload import TreatmentPayload
