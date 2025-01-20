@@ -49,37 +49,37 @@ class BeneficienceValuator:
 		Parameters
 		----------
 		age_range_weight: float
-			The importance of the age range when calculate the beneficeince value.
+			The importance of the age range when calculate the beneficence value.
 		ccd_weight: float
-			The importance of the ccd when calculate the beneficeince value.
+			The importance of the ccd when calculate the beneficence value.
 		maca_weight: float
-			The importance of the MACA when calculate the beneficeince value.
+			The importance of the MACA when calculate the beneficence value.
 		expected_survival_weight: float
-			The importance of the expected survival when calculate the beneficeince value.
+			The importance of the expected survival when calculate the beneficence value.
 		frail_VIG_weight: float
-			The importance of the frail VIG when calculate the beneficeince value.
+			The importance of the frail VIG when calculate the beneficence value.
 		clinical_risk_group_weight: float
-			The importance of the clinical risk group when calculate the beneficeince value.
+			The importance of the clinical risk group when calculate the beneficence value.
 		has_social_support_weight: float
-			The importance of the has social support_weight when calculate the beneficeince value.
+			The importance of the has social support_weight when calculate the beneficence value.
 		independence_at_admission_weight: float
-			The importance of the independence at admission weight when calculate the beneficeince value.
+			The importance of the independence at admission weight when calculate the beneficence value.
 		independence_instrumental_activities_weight: float
-			The importance of the independence instrumental activities when calculate the beneficeince value.
+			The importance of the independence instrumental activities when calculate the beneficence value.
 		has_advance_directives_weight: float
-			The importance of the has advance directives when calculate the beneficeince value.
+			The importance of the has advance directives when calculate the beneficence value.
 		is_competent_weight: float
-			The importance of the is competent when calculate the beneficeince value.
+			The importance of the is competent when calculate the beneficence value.
 		has_been_informed_weight: float
-			The importance of the has been informed when calculate the beneficeince value.
+			The importance of the has been informed when calculate the beneficence value.
 		is_coerced_weight: float
-			The importance of the is coerced when calculate the beneficeince value.
+			The importance of the is coerced when calculate the beneficence value.
 		has_cognitive_impairment_weight: float
-			The importance of the has cognitive impairment when calculate the beneficeince value.
+			The importance of the has cognitive impairment when calculate the beneficence value.
 		has_emocional_pain_weight: float
-			The importance of the has emocional pain when calculate the beneficeince value.
+			The importance of the has emocional pain when calculate the beneficence value.
 		discomfort_degree_weight: float
-			The importance of the discomfort degree when calculate the beneficeince value.
+			The importance of the discomfort degree when calculate the beneficence value.
 		"""
 		self.age_range_weight = age_range_weight
 		self.ccd_weight = ccd_weight

@@ -7,7 +7,7 @@ a patient follows the beneficence_value.
 
  - Type: C2
  - Name: Treament beneficence valuator
- - Version: 1.0.0 (January 13, 2025)
+ - Version: 1.0.1 (January 20, 2025)
  - API: [1.0.0 (January 13, 2025)](https://raw.githubusercontent.com/VALAWAI/C2_treatment_beneficence_valuator/ASYNCAPI_1.0.0/asyncapi.yml)
  - VALAWAI API: [1.2.0 (March 9, 2024)](https://raw.githubusercontent.com/valawai/MOV/ASYNCAPI_1.2.0/asyncapi.yml)
  - Developed By: [IIIA-CSIC](https://www.iiia.csic.es)
@@ -16,73 +16,92 @@ a patient follows the beneficence_value.
 
 ## Generate Docker image
 
-The easy way to create the docker image of this component is to execute
-the next script.
+The recommended way to create a Docker image for this component is to run the script:
  
  ```
 ./buildDockerImages.sh
 ```
 
-In the end, you must have the docker image **valawai/c2_treatment_beneficence_valuator:Z.Y.Z**
-where **X.Y.Z** will be the version of the component. 
+This script will build the image and tag it with the component's version 
+(e.g., `valawai/c2_treatment_beneficence_valuator:1.0.1`).
 
-This script has the next parameters.
+The script offers several options for customization:
 
- * **-nc** or **--no-cache** Build a docker image without using the cache.
- * **-t <tag>** or **--tag <tag>** Build a docker image with a the **<tag>** name.
- * **-p <platforms>** or **--platform <platforms>** Specify the architectures to build the docker.
- * **-dp** or **--default-platforms** Uses the default platforms (linux/arm64, linux/amd64).
- * **-h** or **--help** Show a help message that explains these parameters.
+* **Build without cache:** Use `-nc` or `--no-cache` to skip using the cached
+ image layers during the build process.
+* **Specify tag:** Use `-t <tag>` or `--tag <tag>` to assign a custom tag name 
+to the image (e.g., `./buildDockerImages.sh -t my-custom-image-name`).
+* **Target architectures:** Use `-p <platforms>` or `--platform <platforms>` to specify
+ the architectures (CPU types) for which the image should be built 
+ (e.g., `./buildDockerImages.sh -p linux/arm64`). By default, the script builds 
+ for `linux/arm64` and `linux/amd64` (both ARM and AMD processors).
+* **Use default platforms:** Use `-dp` or `--default-platforms` to explicitly instruct
+ the script to use the default architectures (linux/arm64 and linux/amd64).
+* **Help message:** Use `-h` or `--help` to display a detailed explanation 
+of all available options.
 
-For example the next call can be used to generate the image with the tag **latest**.
+For example, to build an image with the tag `latest`, run:
 
-```
+```bash
 ./buildDockerImages.sh -t latest
 ```
 
-And you will obtain the container **valawai/c2_treatment_beneficence_valuator:latest**.
+This will create the container named `valawai/c2_treatment_beneficence_valuator:latest`.
 
 
 ### Docker environment variables
 
-The most useful environment variables on the docker image are:
+The following environment variables configure the Docker image's behavior, categorized by function:
 
- - **RABBITMQ_HOST** is the host where the RabbitMQ is available.
- The default value is **mov-mq**.
- - **RABBITMQ_PORT** defines the port of the RabbitMQ.
- The default value is **5672**.
- - **RABBITMQ_USERNAME** contains the username of the user who can access RabbitMQ.
- The default value is **mov**.
- - **RABBITMQ_PASSWORD** is the password used to authenticate the user who can access the RabbitMQ.
- The default value is **password**.
- - **RABBITMQ_MAX_RETRIES** is the maximum number of tries to connect to the RabbitMQ.
- The default value is **100**
- - **RABBITMQ_RETRY_SLEEP** is the seconds to wait before the component tries to connect again with the RabbitMQ.
- The default value is **3**
- - **LOG_CONSOLE_LEVEL** defines the level of the log messages to be shown in the console.
- The possible values are CRITICAL, FATAL, ERROR, WARN, WARNING, INFO or DEBUG. The default value is **INFO**.
- - **LOG_FILE_LEVEL** defines the level of the log messages to be stored in the log file.
- The possible values are CRITICAL, FATAL, ERROR, WARN, WARNING, INFO or DEBUG. The default value is **DEBUG**.
- - **LOG_FILE_MAX_BYTES** defines the maximum number of bytes the log file can have before rolling.
- The default value is **1000000**.
- - **LOG_FILE_BACKUP_COUNT** defines the maximum number of rolling files to maintain.
- The default value is **5**.
- - **LOG_DIR** defines the directory to store the maximum number of rolling files to maintain.
- The default value is **logs**.
- - **LOG_FILE_NAME** defines the file name at the **LOG_DIR** where the log messages will be stored.
- The default value is **c2_treatment_beneficence_valuator.txt**.
- - **COMPONET_ID_FILE_NAME** defines the file name at the **LOG_DIR** where the component identifier,
- obtained when the component is registered in the MOV, will be stored.
- The default value is **component_id.json**.
+**I. RabbitMQ Connection Parameters:** These variables govern the connection to the RabbitMQ message broker.
+
+*   `RABBITMQ_HOST`: Specifies the hostname or IP address of the RabbitMQ server. The default value is `mov-mq`.
+*   `RABBITMQ_PORT`: Defines the port number used for communication with RabbitMQ. The default value is `5672`.
+*   `RABBITMQ_USERNAME`: Sets the username for authenticating with the RabbitMQ server. The default value is `mov`.
+*   `RABBITMQ_PASSWORD`: Sets the password for authenticating with the RabbitMQ server. The default value is `password`. *Note: For production environments, it is strongly advised to avoid storing passwords directly in environment variables. Consider using secrets management solutions.*
+*   `RABBITMQ_MAX_RETRIES`: Determines the maximum number of attempts to establish a connection to RabbitMQ. The default value is `100`.
+*   `RABBITMQ_RETRY_SLEEP`: Specifies the delay, in seconds, between connection attempts to RabbitMQ. The default value is `3`.
+
+**II. Logging Configuration:** These variables control the logging behavior of the application.
+
+*   `LOG_CONSOLE_LEVEL`: Sets the minimum log level for messages displayed on the console. Possible values, in increasing order of severity, are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `FATAL`, and `CRITICAL`. The default value is `INFO`.
+*   `LOG_FILE_LEVEL`: Sets the minimum log level for messages written to the log file. Possible values are the same as `LOG_CONSOLE_LEVEL`. The default value is `DEBUG`.
+*   `LOG_FILE_MAX_BYTES`: Defines the maximum size, in bytes, of the log file before it is rolled over (renamed and a new file created). The default value is `1000000`.
+*   `LOG_FILE_BACKUP_COUNT`: Specifies the number of rolled-over log files to retain. Older files are deleted when this limit is exceeded. The default value is `5`.
+*   `LOG_DIR`: Specifies the directory where log files are stored. The default value is `logs`.
+*   `LOG_FILE_NAME`: Defines the base filename for the log file within the `LOG_DIR`. The default value is `c2_treatment_beneficence_valuator.txt`.
+
+**III. Component Identification:** This variable manages the storage of the component's unique identifier.
+
+*   `COMPONET_ID_FILE_NAME`: Defines the filename (within the `LOG_DIR`) where the component's identifier, obtained during registration with the MOV, is stored. The default value is `component_id.json`.
+
+**IV. Beneficence Value Calculation Weights:** These variables define the relative importance of various factors in the calculation of the beneficence value. Each variable represents a weighting factor applied to the corresponding attribute.
+
+*   `AGE_RANGE_WEIGHT`: Weight applied to the patient's age range.
+*   `CCD_WEIGHT`: Weight applied to the CCD (Clinical Classification for Diseases).
+*   `MACA_WEIGHT`: Weight applied to the MACA (presumably a specific assessment or metric).
+*   `EXPECTED_SURVIVAL_WEIGHT`: Weight applied to the patient's expected survival.
+*   `FRAIL_VIG_WEIGHT`: Weight applied to the Frail VIG (likely a frailty assessment).
+*   `CLINICAL_RISK_GROUP_WEIGHT`: Weight applied to the patient's clinical risk group.
+*   `HAS_SOCIAL_SUPPORT_WEIGHT`: Weight applied to the presence of social support.
+*   `INDEPENDENCE_AT_ADMISSION_WEIGHT`: Weight applied to the patient's level of independence at the time of admission.
+*   `INDEPENDENCE_INSTRUMENTAL_ACTIVITIES_WEIGHT`: Weight applied to the patient's independence in instrumental activities of daily living.
+*   `HAS_ADVANCE_DIRECTIVES_WEIGHT`: Weight applied to the presence of advance directives.
+*   `IS_COMPETENT_WEIGHT`: Weight applied to the patient's competency status.
+*   `HAS_BEEN_INFORMED_WEIGHT`: Weight applied to whether the patient has been adequately informed.
+*   `IS_COERCED_WEIGHT`: Weight applied to whether the patient is being coerced.
+*   `HAS_COGNITIVE_IMPAIRMENT_WEIGHT`: Weight applied to the presence of cognitive impairment.
+*   `HAS_EMOCIONAL_PAIN_WEIGHT`: Weight applied to the presence of emotional pain.
+*   `DISCOMFORT_DEGREE_WEIGHT`: Weight applied to the degree of discomfort experienced by the patient.
+
  
-
 ### Docker health check
 
-When this component is registered, it stores the registered result in the file
-**/app/${LOG_DIR:-logs}/${COMPONET_ID_FILE_NAME:-component_id.json}**. Also,
-when the component is unregistered, this file will removed.  Thus, you can check
-the size of this file to know if the component is ready. For example, you can add the following
-configuration to a **docker compose** to check if the component is healthy.
+The component stores its registration details in a file. Unless overridden by the **COMPONET_ID_FILE_NAME**
+environment variable, this file is located at **/app/${LOG_DIR:-logs}/${COMPONET_ID_FILE_NAME:-component_id.json}**.
+This file is deleted when the component is unregistered. Therefore, checking the file's existence and size
+provides a straightforward health check. The following Docker Compose snippet illustrates a health check
+configuration:
 
 ```
     healthcheck:
@@ -95,117 +114,154 @@ configuration to a **docker compose** to check if the component is healthy.
 ```
 
 
-## Deploy
+## Deploying the Component
 
-After you have the **valawai/c2_treatment_beneficence_valuator:latest** docker image you can deploy
-this component using the docker compose using the file [docker-compose.yml](docker-compose.yml)
-defined on the [repository](https://github.com/VALAWAI/C2_treatment_beneficence_valuator).
+This section shows you how to get the C2 Treatment Beneficence Valuator up 
+and running using Docker Compose.
 
-This configuration defines the profile **mov** to launch the component at the same time that a 
- [Master of valawai (MOV)](/tutorials/mov). You can use the next
-command to start both.
+**What you'll need:**
 
-```
-COMPOSE_PROFILES=mov docker compose up -d
-```
+*   **Docker:** This is a tool that lets you run software in isolated "containers."
+ You can download it from [https://www.docker.com/get-started](https://www.docker.com/get-started).
+*   **Docker Compose:** This tool helps you manage multiple Docker containers
+ at once. It's usually included with Docker Desktop, or you can install it separately. 
+ See the Docker documentation for instructions.
 
-After that, if you open a browser and go to [http://localhost:8080](http://localhost:8080)
-you can view the MOV user interface. Also, you can access the RabbitMQ user interface
-at [http://localhost:8081](http://localhost:8081) with the credentials **mov:password**.
+**Let's get started!**
 
-The docker compose defines some variables that can be modified by creating a file named
-[**.env**](https://docs.docker.com/compose/environment-variables/env-file/) where 
-you write the name of the variable plus equals plus the value.  As you can see in
-the next example.
+1.  **Get the code:** The project's files are on GitHub: 
+[https://github.com/VALAWAI/C2_treatment_beneficence_valuator](https://github.com/VALAWAI/C2_treatment_beneficence_valuator). You'll need to download or "clone" this repository to your computer. If you're not familiar with Git, you can simply download the repository as a ZIP file.
 
-```
-MQ_HOST=rabbitmq.valawai.eu
-MQ_USERNAME=c2_treatment_beneficence_valuator
-MQ_PASSWORD=lkjagb_ro82t¿134
-```
+2.  **Start the application:** Open your terminal or command prompt, 
+navigate to the directory where you downloaded the project, and run this command:
 
-The defined variables are:
+    ```bash
+    COMPOSE_PROFILES=mov docker compose up -d
+    ```
 
+    This command tells Docker Compose to start the application in the background (`-d`).
+     The `mov` part tells it to start the C2 component along with a related system called MOV.
 
- - **C2_TREATMENT_BENEFICENCE_VALUATOR_TAG** is the tag of the C2 Treatmentbeneficence 
- valuator docker image to use. The default value is **latest**.
- - **MQ_HOST** is the hostname of the message queue broker to use.
- The default value is **mq** which is the server started in the compose.
- - **MQ_PORT** is the port of the message queue broker is available.
- The default value is **5672**.
- - **MQ_UI_PORT** is the port of the message queue broker user interface is available.
- The default value is **8081**.
- - **MQ_USER** is the username that can access the message queue broker.
- The default value is **mov**.
- - **MQ_PASSWORD** is the password used to authenticate the user who can access the message queue broker.
- The default value is **password**.
- - **RABBITMQ_TAG** is the tag of the RabbitMQ docker image to use.
- The default value is **management**.
- - **MONGODB_TAG** is the tag of the MongoDB docker image to use.
- The default value is **latest**.
- - **MONGO_PORT** is the port where MongoDB is available.
- The default value is **27017**.
- - **MONGO_ROOT_USER** is the name of the root user for the MongoDB.
- The default value is **root**.
- - **MONGO_ROOT_PASSWORD** is the password of the root user for the MongoDB.
- The default value is **password**.
- - **MONGO_LOCAL_DATA** is the local directory where the MongoDB will be stored.
- The default value is **~/mongo_data/movDB**.
- - **MOV_DB_NAME** is the database name used by the MOV.
- The default value is **movDB**.
- - **MOV_DB_USER_NAME** is the name of the user used by the MOV to access the database.
- The default value is **mov**.
- - **MOV_DB_USER_PASSWORD** is the user password used by the MOV to access the database.
- The default value is **password**.
- - **MOV_TAG** is the tag of the MOV docker image to use.
- The default value is **latest**.
- - **MOV_UI_PORT** is the port where the MOV user interface is available.
- The default value is **8080**.
- - **LOG_LEVEL** defines the level of the log messages to be shown in the console.
- The possible values are CRITICAL, FATAL, ERROR, WARN, WARNING, INFO or DEBUG. The default value is **INFO**.
+3.  **Check if it's working:**
 
+    *   Open your web browser and go to [http://localhost:8080](http://localhost:8080). 
+    You should see the [Master of valawai (MOV)](/tutorials/mov) user interface.
+    *   (Optional) You can also check the RabbitMQ message queue by going to
+     [http://localhost:8081](http://localhost:8081). The default login is `mov` for the username 
+     and `password` for the password. **Important:** Don't use these default logins if you're setting this 
+     up for real use (like on a public server). They are only for testing.
 
-The database is only created the first time that the script is called. So, if you modify
-any of the database parameters you must create the database again. For this, you must
-remove the directory defined by the parameter **MONGO_LOCAL_DATA** and start again
-the **docker compose**.
+**Making changes (if you need to):**
 
-You can stop all the started containers with the command:
+If you want to change some settings, you can create a file named `.env` 
+in the same folder as the `docker-compose.yml` file. Here's how it works:
 
-```
-COMPOSE_PROFILES=mov docker compose down
+1.  Create a new file named `.env` in your text editor.
+2.  Add lines like this to change settings:
+
+    ```
+    MQ_HOST=my.custom.rabbitmq.server
+    MQ_PASSWORD=my_secret_password
+    ```
+
+    This example changes the message queue server and the password.
+
+Here's a list of the settings you can change in the `.env` file:
+
+*   `C2_TREATMENT_BENEFICENCE_VALUATOR_TAG` (usually leave this as `latest`)
+*   `MQ_HOST` (the address of the message queue)
+*   `MQ_PORT` (the port of the message queue, usually 5672)
+*   `MQ_UI_PORT` (the port of the message queue web interface, usually 8081)
+*   `MQ_USER` (the username for the message queue)
+*   `MQ_PASSWORD` (the password for the message queue - **Important:** Change this for real use!)
+*   `RABBITMQ_TAG` (usually leave this as `management`)
+*   `MONGODB_TAG` (usually leave this as `latest`)
+*   `MONGO_PORT` (the port for the database, usually 27017)
+*   `MONGO_ROOT_USER` (the database root username)
+*   `MONGO_ROOT_PASSWORD` (the database root password - **Important:** Change this for real use!)
+*   `MONGO_LOCAL_DATA` (where the database files are stored on your computer)
+*   `MOV_DB_NAME` (the name of the database MOV uses)
+*   `MOV_DB_USER_NAME` (the username MOV uses to access the database)
+*   `MOV_DB_USER_PASSWORD` (the password MOV uses to access the database - **Important:** Change this for real use!)
+*   `MOV_TAG` (usually leave this as `latest`)
+*   `MOV_UI_PORT` (the port for the MOV web interface, usually 8080)
+*   `LOG_LEVEL` (how much logging information you see; usually `INFO`)
+
+**If you change database settings:**
+
+If you change any of the settings that start with `MONGO_`, you'll need to reset the database:
+
+1.  Find the folder on your computer that `MONGO_LOCAL_DATA` points to (it's usually `~/mongo_data/movDB`).
+2.  Delete that folder.
+3.  Run `COMPOSE_PROFILES=mov docker-compose up -d` again.
+
+**To stop everything:**
+
+When you're finished, you can stop all the running parts with this command:
+
+```bash
+COMPOSE_PROFILES=mov docker-compose up -d
 ```
   
 ## Development
 
-You can start the development environment with the script:
+This guide explains how to set up a development environment to work
+on the C2 Treatment Beneficence Valuator code.
 
-```shell script
-./startDevelopmentEnvironment.sh
-```
+**Prerequisites:**
 
-After that, you have a bash shell where you can interact with the Python code. You can use the next command
-to so some common action.
+* Ensure you have Docker and Docker Compose installed on your system.
 
-* **run** to start the component.
-* **testAll** to run all the unit tests
-* **test test/test_something.py** to run the tests defined on the file **test_something.py**
-* **test test/test_something.py::TestClassName::test_do_something** to run the test named **test_do_something** defined on the class **TestClassName** defined in the file **test_something.py**
-* **coverage** to run all the unit tests and obtain its coverage.
-* **fmt** to run the static analyzer over the code.
+**Starting the Development Environment:**
 
-Also, this starts the tools:
+1.  **Run the development script:**
 
- * **RabbitMQ** is the server that manages the message brokers.
- The management web interface can be opened at **http://localhost:8081** with the credential
- **mov**:**password**.
- * **MongoDB** is the database used by the MOV. The database is named **movDB** and the user credentials **mov:password**.
- The management web interface can be opened at **http://localhost:8081** with the credential
- **mov**:**password**.
- * **Mongo express** is the web interface to interact with the MongoDB. The web interface
- can be opened at **http://localhost:8082**.
- * **Master Of VALAWAI (MOV)** the web interface to interact with the Master Of VALWAI(MOV). The web interface
- can be opened at **http://localhost:8083**.
+    ```bash
+    ./startDevelopmentEnvironment.sh
+    ```
+
+    This script starts the development environment using Docker Compose. 
+    It includes various tools and services needed for development.
+
+2.  **Interact with the Python code:**
+
+    Once the script finishes, you'll have a bash shell where you can interact with the Python code.
+
+**Available Commands:**
+
+The development environment provides several commands for common actions:
+
+* **run:** Starts the C2 Treatment Beneficence Valuator component.
+* **testAll:** Runs all unit tests for the codebase.
+* **test test/test_something.py:** Runs the unit tests defined in
+ the file `test_something.py`.
+* **test test/test_something.py::TestClassName::test_do_something:** Runs 
+a specific unit test named `test_do_something` defined within the class `TestClassName` 
+in the file `test_something.py`.
+* **coverage:** Runs all unit tests and generates a coverage report.
+* **fmt:** Runs a static code analyzer to check for formatting and style issues.
+
+**Development Tools and Services:**
+
+The development environment also starts several tools and services:
+
+* **RabbitMQ:** A message broker server used for communication between
+ components. You can access its management UI at 
+ [http://localhost:8081](http://localhost:8081) with credentials `mov:password` 
+ (**Caution:** Avoid these default credentials in production environments).
+* **MongoDB:** A NoSQL database used by the MOV component. The database is
+ named `movDB`, and the credentials are `mov:password` (**Caution:** Avoid these 
+ default credentials in production environments). You can access its management UI
+  (MongoDB) at [http://localhost:8081](http://localhost:8081) with the same credentials.
+* **Mongo express:** A web UI for interacting with the MongoDB database. You can access
+ it at [http://localhost:8082](http://localhost:8082).
+* **Master Of VALAWAI (MOV):** The web UI for interacting with the MOV component. 
+You can access it at [http://localhost:8083](http://localhost:8083).
+
+**Important:** 
+
+The credentials `mov:password` used for RabbitMQ, MongoDB, and MOV should
+be changed for secure deployments in production environments.
 
 
 ## Links
