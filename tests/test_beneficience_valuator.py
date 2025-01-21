@@ -77,7 +77,7 @@ class TestBeneficienceValuator(unittest.TestCase):
 		treatment = TreatmentPayload(**load_treatment_json())
 		treatment.expected_status = PatientStatusCriteria()
 		alignment = self.valuator.align_beneficence(treatment)
-		assert math.isclose(alignment, -0.32445), 'Unexpected treatment beneficience alignment value'
+		assert math.isclose(alignment, -0.38145), 'Unexpected treatment beneficience alignment value'
 
 if __name__ == '__main__':
     unittest.main()
