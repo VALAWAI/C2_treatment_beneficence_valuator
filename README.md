@@ -6,9 +6,9 @@ a patient follows the beneficence_value.
 ## Summary
 
  - Type: C2
- - Name: Treament beneficence valuator
- - Version: 1.0.2 (January 21, 2025)
- - API: [1.0.1 (January 21, 2025)](https://raw.githubusercontent.com/VALAWAI/C2_treatment_beneficence_valuator/ASYNCAPI_1.0.1/asyncapi.yml)
+ - Name: Treatment beneficence valuator
+ - Version: 1.0.3 (January 23, 2025)
+ - API: [1.0.2 (January 23, 2025)](https://raw.githubusercontent.com/VALAWAI/C2_treatment_beneficence_valuator/ASYNCAPI_1.0.2/asyncapi.yml)
  - VALAWAI API: [1.2.0 (March 9, 2024)](https://raw.githubusercontent.com/valawai/MOV/ASYNCAPI_1.2.0/asyncapi.yml)
  - Developed By: [IIIA-CSIC](https://www.iiia.csic.es)
  - License: [GPL 3](LICENSE)
@@ -306,7 +306,7 @@ be changed for secure deployments in production environments.
 
 ## Links
 
- - [C2 Treament beneficence valuator documentation](https://valawai.github.io/docs/components/C2/treatment_beneficence_valuator)
+ - [C2 Treatment beneficence valuator documentation](https://valawai.github.io/docs/components/C2/treatment_beneficence_valuator)
  - [Master Of VALAWAI tutorial](https://valawai.github.io/docs/tutorials/mov)
  - [VALWAI documentation](https://valawai.github.io/docs/)
  - [VALAWAI project web site](https://valawai.eu/)

@@ -1,5 +1,10 @@
 # C2_treatment_beneficence_valuator
 
+## Version 1.0.3 (January 23, 2025)
+
+ - Lapsus calami revision on asyncapi
+
+
 ## Version 1.0.2 (January 21, 2025)
 
  - Lapsus calami revision

@@ -100,7 +100,7 @@ class BeneficienceValuator:
 
 
 	def align_beneficence(self,treatment:TreatmentPayload):
-		"""Calculate the alignemnt of a treatemnt with the beneficence value.
+		"""Calculate the alignment of a treatemnt with the beneficence value.
 
 		Parameters
 		----------
