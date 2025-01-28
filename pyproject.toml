@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "C2_Treatment_beneficence_valuator"
-version = "1.0.3"
+version = "1.1.0"
 description = "C2 component that calculate the beneficence value of a treatment."
 readme = "README.md"
 requires-python = ">=3.10"

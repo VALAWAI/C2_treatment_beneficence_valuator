@@ -21,7 +21,7 @@ import json
 import logging
 import os
 
-from beneficience_valuator import BeneficienceValuator
+from beneficence_valuator import BeneficenceValuator
 from message_service import MessageService
 from mov import MOV
 from pydantic import ValidationError
@@ -58,10 +58,10 @@ class ReceivedTreatmentHandler:
 				treatment = TreatmentPayload(**json_dict)
 				self.mov.info("Received a treatment",json_dict)
 
-				valuator = BeneficienceValuator()
+				valuator = BeneficenceValuator()
 				alignment = valuator.align_beneficence(treatment)
 
-				value_name = os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience")
+				value_name = os.getenv('BENEFICENCE_VALUE_NAME',"Beneficence")
 				feedback_msg = {
 						"treatment_id": treatment.id,
 						"value_name": value_name,

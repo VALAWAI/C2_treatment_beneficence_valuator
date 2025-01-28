@@ -22,7 +22,7 @@ import os
 from treatment_payload import TreatmentPayload
 
 
-class BeneficienceValuator:
+class BeneficenceValuator:
 	"""The component that ovtain the benificence value from a patient treatment.
 	"""
 
@@ -44,7 +44,7 @@ class BeneficienceValuator:
 		has_emocional_pain_weight:float = float(os.getenv('HAS_EMOCIONAL_PAIN_WEIGHT',"0.0")),
 		discomfort_degree_weight:float = float(os.getenv('DISCOMFORT_DEGREE_WEIGHT',"0.057"))
 		):
-		"""Initialize the beneficience valuator
+		"""Initialize the beneficence valuator
 
 		Parameters
 		----------

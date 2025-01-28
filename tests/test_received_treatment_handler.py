@@ -83,11 +83,11 @@ class TestReceivedTreatmentHandler(unittest.TestCase):
 
 					msg['treatment_id'] = treatment.id
 					assert 'value_name' in msg, "Not defined value_name in feedback"
-					assert msg['value_name'] ==  os.getenv('BENEFICIENCE_VALUE_NAME',"Beneficience"), "Unexpected value_name in the feedback"
+					assert msg['value_name'] ==  os.getenv('BENEFICENCE_VALUE_NAME',"Beneficence"), "Unexpected value_name in the feedback"
 
 					assert 'alignment' in msg, "Not defined alignment in feedback"
 					assert isinstance(msg['alignment'],float), "Unexpected alignment in the feedback"
-					assert math.isclose(msg['alignment'], expected_value), 'Unexpected treatment beneficience alignment value'
+					assert math.isclose(msg['alignment'], expected_value), 'Unexpected treatment beneficence alignment value'
 					return msg
 
 			time.sleep(3)
