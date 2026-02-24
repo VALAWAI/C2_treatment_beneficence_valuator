@@ -17,15 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import json
-import logging
 import os
 
-from beneficence_valuator import BeneficenceValuator
-from message_service import MessageService
-from mov import MOV
-from pydantic import ValidationError
-from treatment_payload import TreatmentPayload
+from c2_treatment_beneficence_valuator.beneficence_valuator import BeneficenceValuator
+from c2_treatment_beneficence_valuator.message_service import MessageService
+from c2_treatment_beneficence_valuator.mov import MOV
+from c2_treatment_beneficence_valuator.treatment_payload import TreatmentPayload
 
 
 class ReceivedTreatmentHandler:
@@ -51,30 +48,22 @@ class ReceivedTreatmentHandler:
 
 		try:
 
-			json_dict = json.loads(body)
+			treatment = TreatmentPayload.model_validate_json(body)
+			self.mov.info("Received a treatment",treatment)
 
-			try:
+			valuator = BeneficenceValuator()
+			alignment = valuator.align_beneficence(treatment)
 
-				treatment = TreatmentPayload(**json_dict)
-				self.mov.info("Received a treatment",json_dict)
+			value_name = os.getenv('BENEFICENCE_VALUE_NAME',"Beneficence")
+			feedback_msg = {
+					"treatment_id": treatment.id,
+					"value_name": value_name,
+					"alignment": alignment
+				}
+			self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
+			self.mov.info("Sent treatment value feedback",feedback_msg)
 
-				valuator = BeneficenceValuator()
-				alignment = valuator.align_beneficence(treatment)
+		except Exception as error:
 
-				value_name = os.getenv('BENEFICENCE_VALUE_NAME',"Beneficence")
-				feedback_msg = {
-						"treatment_id": treatment.id,
-						"value_name": value_name,
-						"alignment": alignment
-					}
-				self.message_service.publish_to('valawai/c2/treatment_beneficence_valuator/data/treatment_value_feedback',feedback_msg)
-				self.mov.info("Sent treatment value feedback",feedback_msg)
-
-			except ValidationError as validation_error:
-
-				msg = f"Cannot process treatment, because {validation_error}"
-				self.mov.error(msg,json_dict)
-
-		except ValueError:
-
-			logging.exception("Unexpected message %s",body)
+			msg = f"Cannot process treatment, because {error}"
+			self.mov.error(msg,body)

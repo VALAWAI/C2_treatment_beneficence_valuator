@@ -75,7 +75,7 @@ class ChangeParametersHandler:
             self.mov.error(msg, body)
 
     def _update_weight(self, weight: float | None, env_property_name: str):
-        """Update a weight that is used on the autonomy value alignment calculation.
+        """Update a weight that is used on the treatment beneficence value alignment calculation.
 
         Parameters
         ----------
